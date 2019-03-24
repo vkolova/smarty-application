@@ -1,7 +1,18 @@
-import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import React  from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  ImageBackground
+} from 'react-native';
+import { Icon } from 'react-native-elements';
 import { Link } from 'react-router-native';
 import axios from 'axios';
+
+import bg from '../../assets/teodor-kuduschiev-1163518-unsplash.jpg';
+
+import styles from '../styles/auth.js';
+
 
 class Register extends React.Component {
   state = {
@@ -17,56 +28,42 @@ class Register extends React.Component {
 
   render () {
     return (
-      <View style={{
-        display: 'flex',
-        justifyContent: 'center'
-      }}>
-        <Text>Регистрация</Text>
-        <TextInput
-          placeholder='Потребителско име'
-          autoCorrect={false}
-          onChangeText={this.onUsernameChange}
-          style={styles.input}
-        />
-        <TextInput
-          secureTextEntry
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholder='Парола'
-          onChangeText={this.onPasswordChange}
-          style={styles.input}
-        />
-        {/* <Text style={{ color: 'blue' }} onPress={() => {}}>
-          {'Започни да играеш!'}
-        </Text>
-        <Text>
-          или
-          <Text style={{ color: 'blue' }} onPress={() => {}}>
-            {'Влез'}
-          </Text>
-        </Text>   */}
+      <ImageBackground source={bg} style={styles.image}>
+        <View style={styles.inputWrapper}>
+          <Icon
+            name='user'
+            type='feather'
+            iconStyle={styles.icon}
+          />
+          <TextInput
+            placeholder='Потребителско име'
+            autoCorrect={false}
+            onChangeText={this.onUsernameChange}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.inputWrapper}>
+          <Icon
+            name='lock'
+            type='feather'
+            iconStyle={styles.icon}
+          />
+          <TextInput
+            secureTextEntry
+            autoCapitalize='none'
+            autoCorrect={false}
+            placeholder='Парола'
+            onChangeText={this.onPasswordChange}
+            style={styles.input}
+          />
+        </View>
 
-          <Link to='/login' style={styles.navItem}>
-            <Text>Имаш регистрация?</Text>
-          </Link>
-      </View>
+        <Text style={styles.actionBtn} onPress={this.onLoginPress}>Регистрация</Text>
+
+        <Link to='/' style={styles.bottomLink}><Text>Имаш регистрация?</Text></Link>
+      </ImageBackground>
     );
   }
 }
 
 export default Register;
-
-const styles = StyleSheet.create({
-  input: {
-    minWidth: 80,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 3,
-    paddingBottom: 3,
-    marginBottom: 5,
-    borderRightWidth: 3,
-    borderLeftWidth: 3,
-    borderColor: '#49403B',
-    backgroundColor: '#DCDCDA'
-  }
-});

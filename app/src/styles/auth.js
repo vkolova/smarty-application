@@ -43,5 +43,9 @@ export default StyleSheet.create({
         borderWidth: 1,
         color: '#ffffff',
         textTransform: 'uppercase'
+    },
+    bottomLink: {
+        position: 'absolute',
+        bottom: 15
     }
 });

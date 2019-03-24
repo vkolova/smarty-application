@@ -13,14 +13,18 @@ import bg from '../../assets/teodor-kuduschiev-1163518-unsplash.jpg';
 
 import styles from '../styles/auth.js';
 
+const instance = axios.create({
+  baseURL: 'http://192.168.1.103:8000',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Accept': 'application/json'
+  }
+});
+
 class Login extends React.Component {
   state = {
     username: '',
     password: ''
-  }
-
-  componentDidMount() {
-    axios.defaults.baseURL = 'http://192.168.1.103:8000/accounts';
   }
 
   onUsernameChange = text => this.setState({ username: text })
@@ -28,9 +32,9 @@ class Login extends React.Component {
   onPasswordChange = text =>  this.setState({ password: text })
 
   onLoginPress = () => {
-    axios
+    instance
       .post(
-        `/login/`,
+        `/accounts/login/`,
         {
           username: this.state.username,
           password: this.state.password
@@ -69,7 +73,7 @@ class Login extends React.Component {
           />
           <TextInput
             secureTextEntry
-            autoCapitalize="none"
+            autoCapitalize='none'
             autoCorrect={false}
             placeholder='Парола'
             onChangeText={this.onPasswordChange}
@@ -78,6 +82,8 @@ class Login extends React.Component {
         </View>
 
         <Text style={styles.actionBtn} onPress={this.onLoginPress}>Вход</Text>
+
+        <Link to='/register' style={styles.bottomLink}><Text>Нямаш регистрация?</Text></Link>
       </ImageBackground>
     );
   }
