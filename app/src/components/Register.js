@@ -7,11 +7,12 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Link } from 'react-router-native';
-import axios from 'axios';
 
-import bg from '../../assets/teodor-kuduschiev-1163518-unsplash.jpg';
+import Input from './Input';
 
-import styles from '../styles/auth.js';
+import { u } from '../utils';
+import styles from '../styles/auth';
+import common from '../styles/common';
 
 
 class Register extends React.Component {
@@ -28,40 +29,44 @@ class Register extends React.Component {
 
   render () {
     return (
-      <ImageBackground source={bg} style={styles.image}>
-        <View style={styles.inputWrapper}>
-          <Icon
-            name='user'
-            type='feather'
-            iconStyle={styles.icon}
-          />
-          <TextInput
-            placeholder='Потребителско име'
-            autoCorrect={false}
+      <View style={common.pageWrapper}>
+        <View style={styles.header}>
+          <Link to='/'>
+            <Icon
+              name='arrow-left'
+              type='feather'
+              iconStyle={styles.backIcon}
+            />
+          </Link>
+          <Text style={styles.title}>{ u('Регистрация') }</Text>
+        </View>
+
+        <View style={styles.form}>
+          <Input
+            icon='user'
+            label='Потребител'
             onChangeText={this.onUsernameChange}
-            style={styles.input}
+            value={this.state.username}
           />
-        </View>
-        <View style={styles.inputWrapper}>
-          <Icon
-            name='lock'
-            type='feather'
-            iconStyle={styles.icon}
-          />
-          <TextInput
-            secureTextEntry
-            autoCapitalize='none'
-            autoCorrect={false}
-            placeholder='Парола'
+          <Input
+            icon='lock'
+            label='Парола'
             onChangeText={this.onPasswordChange}
-            style={styles.input}
+            value={this.state.password}
+            additional={{
+              secureTextEntry: true
+            }}
           />
+
+          <Text style={common.btnPrim} onPress={this.onLoginPress}>{ u('Регистрация') }</Text>
         </View>
-
-        <Text style={styles.actionBtn} onPress={this.onLoginPress}>Регистрация</Text>
-
-        <Link to='/' style={styles.bottomLink}><Text>Имаш регистрация?</Text></Link>
-      </ImageBackground>
+      
+        <View style={styles.footer}>
+          <Link to='/login' style={styles.bottomLink}>
+            <Text>Имаш профил?</Text>
+          </Link>
+        </View>
+      </View>
     );
   }
 }

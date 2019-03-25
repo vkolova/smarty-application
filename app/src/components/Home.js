@@ -1,15 +1,20 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import {
+  View,
+  Text
+} from 'react-native';
+import { Link } from 'react-router-native';
+
+import common from '../styles/common';
 
 
-class Home extends React.Component {
+export default class Home extends React.Component {
   render () {
     return (
-      <View>
+      <View style={common.pageWrapper}>
         <Text>Home screen</Text>
+        <Link to='/'><Text>Splash screen</Text></Link>
       </View>
     );
   }
 }
-
-export default Home;

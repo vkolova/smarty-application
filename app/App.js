@@ -1,27 +1,24 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, AppRegistry  } from 'react-native';
 
-import { NativeRouter, Route, Link } from "react-router-native";
+import { NativeRouter, Route, Link } from 'react-router-native';
+
+import { name as appName } from "./app.json";  
+AppRegistry.registerComponent(appName, () => App);
 
 import Login from './src/components/Login';
 import Register from './src/components/Register';
 import Home from './src/components/Home';
+import Splash from './src/components/Splash';
+
 
 export default class App extends React.Component {
-  render() {
+  render () {
     return (
         <NativeRouter>
           <View style={styles.container}>
-            {/* <View style={styles.nav}>
-              <Link to="/" style={styles.navItem}>
-                <Text>Регистрация</Text>
-              </Link>
-              <Link to="/login" style={styles.navItem}>
-                <Text>Вход</Text>
-              </Link>
-            </View> */}
-
-            <Route exact path="/" component={Login} />
+            <Route exact path="/" component={Splash} />
+            <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
 
             <Route exact path="/home" component={Home} />
@@ -30,7 +27,6 @@ export default class App extends React.Component {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   container: {

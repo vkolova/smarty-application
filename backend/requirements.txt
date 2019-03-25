@@ -1,2 +1,4 @@
 Django==2.1.7
 djangorestframework==3.9.1
+channels==2.1.7
+pywin32==224

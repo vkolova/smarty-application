@@ -1,27 +1,44 @@
 import { StyleSheet } from 'react-native';
-import { withTheme } from 'react-native-elements';
 
 export default StyleSheet.create({
-    image: {
+    header: {
         width: '100%',
-        height: '100%',
+        paddingTop: 30,
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        flexDirection: 'column'
+    },
+    title: {
+        fontSize: 36,
+        marginTop: 20
+    },
+    backIcon: {
+        marginLeft: -5,
+        fontSize: 36,
+    },
+    form: {
+        marginTop: -70,
         display: 'flex',
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
         flexDirection: 'column',
-        resizeMode: 'cover'
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     inputWrapper: {
         flexDirection: 'row'
     },
     icon: {
-        color: '#fff',
+        color: '#191919',
         marginBottom: -50,
         marginRight: -25
     },
+    label: {
+        left: 35,
+        position: 'absolute'
+    },
     input: {
-        width: '65%',
+        width: '100%',
         paddingLeft: 35,
         paddingRight: 10,
         paddingTop: 3,
@@ -29,23 +46,18 @@ export default StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         borderBottomWidth: 1,
-        borderColor: '#fff',
-        color: '#fff',
+        borderColor: '#191919',
+        color: '#191919',
         backgroundColor: 'transparent'
     },
-    actionBtn: {
-        paddingBottom: 5,
-        paddingTop: 5,
-        paddingLeft: 25,
-        paddingRight: 25,
-        marginTop: 30,
-        borderColor: '#ffffff',
-        borderWidth: 1,
-        color: '#ffffff',
-        textTransform: 'uppercase'
+    footer: {
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        flexDirection: 'column'
     },
     bottomLink: {
-        position: 'absolute',
-        bottom: 15
+        // position: 'absolute',
+        // bottom: 15
     }
 });

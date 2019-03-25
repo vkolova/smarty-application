@@ -7,19 +7,14 @@ import {
   } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Link } from 'react-router-native';
-import axios from 'axios';
+import { SecureStore } from 'expo';
 
-import bg from '../../assets/teodor-kuduschiev-1163518-unsplash.jpg';
+import Input from './Input';
+import request from '../request';
+import { u } from '../utils';
 
 import styles from '../styles/auth.js';
-
-const instance = axios.create({
-  baseURL: 'http://192.168.1.103:8000',
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Accept': 'application/json'
-  }
-});
+import common from '../styles/common';
 
 class Login extends React.Component {
   state = {
@@ -32,7 +27,7 @@ class Login extends React.Component {
   onPasswordChange = text =>  this.setState({ password: text })
 
   onLoginPress = () => {
-    instance
+    request
       .post(
         `/accounts/login/`,
         {
@@ -41,9 +36,11 @@ class Login extends React.Component {
         }
       )
       .then(response => {
-        const { token, user } = response.data;
-        axios.defaults.headers.common.Authorization = `Token ${token}`;
-        console.log(response.data);
+        const { token } = response.data;
+        request.defaults.headers.common.Authorization = `Token ${token}`;
+        SecureStore.setItemAsync('userToken', token, {
+          keychainAccessible: SecureStore.WHEN_UNLOCKED
+        })
         this.props.history.push('/home');
       })
       .catch(error => console.log(error));
@@ -51,40 +48,49 @@ class Login extends React.Component {
 
   render () {
     return (
-      <ImageBackground source={bg} style={styles.image}>
-        <View style={styles.inputWrapper}>
-          <Icon
-            name='user'
-            type='feather'
-            iconStyle={styles.icon}
-          />
-          <TextInput
-            placeholder='Потребителско име'
-            autoCorrect={false}
+      <View style={common.pageWrapper}>
+       <View style={styles.header}>
+          <Link to='/'>
+            <Icon
+              name='arrow-left'
+              type='feather'
+              iconStyle={styles.backIcon}
+            />
+          </Link>
+          <Text style={styles.title}>
+            { u('Вход') }
+          </Text>
+        </View>
+
+        <View style={styles.form}>
+          <Input
+            icon='user'
+            label='Потребител'
             onChangeText={this.onUsernameChange}
-            style={styles.input}
+            value={this.state.username}
           />
-        </View>
-        <View style={styles.inputWrapper}>
-          <Icon
-            name='lock'
-            type='feather'
-            iconStyle={styles.icon}
-          />
-          <TextInput
-            secureTextEntry
-            autoCapitalize='none'
-            autoCorrect={false}
-            placeholder='Парола'
+          <Input
+            icon='lock'
+            label='Парола'
             onChangeText={this.onPasswordChange}
-            style={styles.input}
+            value={this.state.password}
+            additional={{
+              'secureTextEntry': true
+            }}
           />
+
+          <Text
+            style={common.btnPrim}
+            onPress={this.onLoginPress}
+          >{ u('Вход') }</Text>
         </View>
-
-        <Text style={styles.actionBtn} onPress={this.onLoginPress}>Вход</Text>
-
-        <Link to='/register' style={styles.bottomLink}><Text>Нямаш регистрация?</Text></Link>
-      </ImageBackground>
+        
+        <View style={styles.footer}>
+          <Link to='/register' style={styles.bottomLink}>
+            <Text>{ 'Нямаш профил?' }</Text>
+          </Link>
+        </View>
+      </View>
     );
   }
 }
