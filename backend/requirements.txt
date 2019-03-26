@@ -3,3 +3,5 @@ djangorestframework==3.9.1
 channels==2.1.7
 psycopg2-binary
 dj-database-url
+gunicorn
+django-heroku
