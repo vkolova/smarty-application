@@ -1,15 +1,13 @@
 import React  from 'react';
 import {
   View,
-  Text,
-  TextInput,
-  ImageBackground
-  } from 'react-native';
-import { Icon } from 'react-native-elements';
+  Text
+} from 'react-native';
 import { Link } from 'react-router-native';
 import { SecureStore } from 'expo';
 
 import Input from './Input';
+import Header from './Header';
 import request from '../request';
 import { u } from '../utils';
 
@@ -27,6 +25,8 @@ class Login extends React.Component {
   onPasswordChange = text =>  this.setState({ password: text })
 
   onLoginPress = () => {
+    console.log('login press');
+    request.defaults.headers.common.Authorization = null;
     request
       .post(
         `/accounts/login/`,
@@ -36,6 +36,7 @@ class Login extends React.Component {
         }
       )
       .then(response => {
+        console.log(response)
         const { token } = response.data;
         request.defaults.headers.common.Authorization = `Token ${token}`;
         SecureStore.setItemAsync('userToken', token, {
@@ -49,18 +50,10 @@ class Login extends React.Component {
   render () {
     return (
       <View style={common.pageWrapper}>
-       <View style={styles.header}>
-          <Link to='/'>
-            <Icon
-              name='arrow-left'
-              type='feather'
-              iconStyle={styles.backIcon}
-            />
-          </Link>
-          <Text style={styles.title}>
-            { u('Вход') }
-          </Text>
-        </View>
+        <Header
+          link='/'
+          title='Вход'
+        />
 
         <View style={styles.form}>
           <Input

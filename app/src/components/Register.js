@@ -1,16 +1,16 @@
 import React  from 'react';
 import {
   View,
-  Text,
-  TextInput,
-  ImageBackground
+  Text
 } from 'react-native';
-import { Icon } from 'react-native-elements';
 import { Link } from 'react-router-native';
 
+import Header from './Header';
 import Input from './Input';
 
 import { u } from '../utils';
+import request from '../request';
+
 import styles from '../styles/auth';
 import common from '../styles/common';
 
@@ -25,21 +25,37 @@ class Register extends React.Component {
 
   onPasswordChange = text =>  this.setState({ password: text })
 
-  onRegister = () => {};
+  onRegister = () => {
+    request.defaults.headers.common.Authorization = null;
+    request
+      .post(
+        `/accounts/register/`,
+        {
+          username: this.state.username,
+          password1: this.state.password,
+          password2: this.state.password
+        }
+      )
+      .then(response => {
+        console.log(response);
+
+        const { token } = response.data;
+        request.defaults.headers.common.Authorization = `Token ${token}`;
+        SecureStore.setItemAsync('userToken', token, {
+          keychainAccessible: SecureStore.WHEN_UNLOCKED
+        })
+        this.props.history.push('/home');
+      })
+      .catch(error => console.log(error));
+  };
 
   render () {
     return (
       <View style={common.pageWrapper}>
-        <View style={styles.header}>
-          <Link to='/'>
-            <Icon
-              name='arrow-left'
-              type='feather'
-              iconStyle={styles.backIcon}
-            />
-          </Link>
-          <Text style={styles.title}>{ u('Регистрация') }</Text>
-        </View>
+        <Header
+          link='/'
+          title='Регистрация'
+        />
 
         <View style={styles.form}>
           <Input

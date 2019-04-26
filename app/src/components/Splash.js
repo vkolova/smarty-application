@@ -3,7 +3,7 @@ import {
   View,
   Text,
   ImageBackground
-  } from 'react-native';
+} from 'react-native';
 import { Link } from 'react-router-native';
 import { SecureStore } from 'expo';
 
@@ -18,8 +18,11 @@ export default class Splash extends React.Component {
   componentDidMount () {
     SecureStore.getItemAsync('userToken')
     .then(token => {
-      request.defaults.headers.common.Authorization = `Token ${token}`;
-      this.props.history.push('/home');
+      console.log(token)
+      if (token) {
+        request.defaults.headers.common.Authorization = `Token ${token}`;
+        this.props.history.push('/home');
+      }
     })
     .catch(err => console.log(err))
   }

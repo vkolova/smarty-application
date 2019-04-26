@@ -1,13 +1,12 @@
 import React  from 'react';
 import {
-  View,
-  Text,
+  Animated,
   TextInput,
-  Animated
-  } from 'react-native';
+  View
+} from 'react-native';
 import { Icon } from 'react-native-elements';
-import { u } from '../utils';
 
+import { u } from '../utils';
 import styles from '../styles/auth.js';
 
 export default class Input extends React.Component {
@@ -49,6 +48,7 @@ export default class Input extends React.Component {
                 outputRange: ['#707070', '#aaa'],
             })
         };
+
         return (
             <View style={styles.inputWrapper}>
                 <Icon
