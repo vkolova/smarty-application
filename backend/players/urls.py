@@ -9,9 +9,10 @@
 
 
 from rest_framework import routers
-from .views import PlayerView
+from .views import PlayerView, PlayersList
 
 router = routers.SimpleRouter()
 router.register(r'player', PlayerView)
+router.register(r'players', PlayersList)
 
 urlpatterns = router.urls

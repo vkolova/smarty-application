@@ -25,39 +25,25 @@ class Login extends React.Component {
   onPasswordChange = text =>  this.setState({ password: text })
 
   onLoginPress = () => {
-    // request.defaults.headers.common.Authorization = null;
-    // request
-    //   .post(
-    //     `/api/accounts/login/`,
-    //     {
-    //       username: this.state.username,
-    //       password: this.state.password
-    //     }
-    //   )
-    //   .then(response => {
-    //     console.log(response)
-    //     const { token } = response.data;
-    //     request.defaults.headers.common.Authorization = `Token ${token}`;
-    //     SecureStore.setItemAsync('userToken', token, {
-    //       keychainAccessible: SecureStore.WHEN_UNLOCKED
-    //     })
-    //     this.props.history.push('/home');
-    //   })
-    //   .catch(error => console.log(error));
-    fetch('http://192.168.1.101:8001/api/accounts/login/', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: this.state.username,
-        password: this.state.password
-      }),
-    }).then((response) => console.log(response))
-    .catch((error) => {
-      console.error(error);
-    });
+    request.defaults.headers.common.Authorization = null;
+    request
+      .post(
+        `/api/accounts/login/`,
+        {
+          username: this.state.username,
+          password: this.state.password
+        }
+      )
+      .then(response => {
+        console.log(response)
+        const { token } = response.data;
+        request.defaults.headers.common.Authorization = `Token ${token}`;
+        SecureStore.setItemAsync('userToken', token, {
+          keychainAccessible: SecureStore.WHEN_UNLOCKED
+        })
+        this.props.history.push('/home');
+      })
+      .catch(error => console.log(error));
   }
 
   render () {

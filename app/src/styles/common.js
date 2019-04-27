@@ -14,6 +14,28 @@ export default StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'column'
     },
+    pageNoPadding: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'column'
+    },
+    pageList: {
+        width: '100%',
+        height: '100%',
+        paddingBottom: 25,
+        paddingTop: 35,
+        paddingLeft: 50,
+        paddingRight: 50,
+        display: 'flex',
+        flex: 1,
+        // alignItems: 'center',
+        justifyContent: 'flex-start',
+        flexDirection: 'column'
+    },
     pageWithImage: {
         width: '100%',
         height: '100%',

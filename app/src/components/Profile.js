@@ -1,16 +1,17 @@
 import React from 'react';
 import {
     View,
-    Text
+    Text,
+    Image
 } from 'react-native';
 
 import Navigation from './Navigation';
-import Header from './Header';
 
 import { u } from '../utils';
 import request from '../request';
 
 import common from '../styles/common';
+import styles from '../styles/profile';
 
 class Profile extends React.Component {
     state = {
@@ -19,14 +20,54 @@ class Profile extends React.Component {
     }
 
     componentDidMount () {
-        console.log(this.props)
-        // request.get(`/api/player/${}/`)
+        request.get(`/api/player/${this.props.match.params.id}/`)
+        .then(response => {
+            console.log(response.data);
+            this.setState({ data: response.data });
+        })
+        .catch(error => console.log(error))
+        .then(() => {
+            this.setState({ loading: false });
+        })
     }
 
     render () {
-        if (this.state.loading) {
-            return <Text>{'Loading...'}</Text>
+        if (this.state.loading || !this.state.data) {
+            return <React.Fragment>
+                <Text>{'LOADING...'}</Text>
+                <Navigation/>
+            </React.Fragment>
         }
+
+        const { avatar, level, score } = this.state.data;
+        const { username } = this.state.data.user;
+        
+        return <React.Fragment>
+            <View style={common.pageNoPadding}>
+                <Image source={{uri: avatar}} style={styles.avatar} />
+                
+                <View style={styles.whitePanel}>
+                    <Text style={styles.username}>{ username }</Text>
+                    <View style={styles.mainInfo}>
+                        <View style={styles.mainInfoCard}>
+                            <Text>{ level }</Text>
+                            <Text>{ u('Ниво') }</Text>
+                        </View>
+                        <View style={styles.vl}/>
+                        <View style={styles.mainInfoCard}>
+                            <Text>{ score }</Text>
+                            <Text>{ u('Точки') }</Text>
+                        </View>
+                        <View style={styles.vl}/>
+                        <View style={styles.mainInfoCard}>
+                            <Text>{ 0 }</Text>
+                            <Text>{ u('Игри') }</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+            <Navigation/>
+        </React.Fragment>
     }
 };
 

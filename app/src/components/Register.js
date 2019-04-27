@@ -36,8 +36,6 @@ class Register extends React.Component {
         }
       )
       .then(response => {
-        console.log(response);
-
         const { token } = response.data;
         request.defaults.headers.common.Authorization = `Token ${token}`;
         SecureStore.setItemAsync('userToken', token, {
