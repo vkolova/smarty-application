@@ -29,11 +29,10 @@ class Register extends React.Component {
     request.defaults.headers.common.Authorization = null;
     request
       .post(
-        `/accounts/register/`,
+        `/api/accounts/register/`,
         {
           username: this.state.username,
-          password1: this.state.password,
-          password2: this.state.password
+          password: this.state.password
         }
       )
       .then(response => {

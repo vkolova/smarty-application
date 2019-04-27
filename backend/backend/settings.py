@@ -28,9 +28,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_extensions',
 
     'questions',
     'channels',
+    'players',
 ]
 
 MIDDLEWARE = [

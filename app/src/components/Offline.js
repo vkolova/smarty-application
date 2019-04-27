@@ -4,9 +4,7 @@ import {
   Text
 } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { Link } from 'react-router-native';
 
-import Navigation from './Navigation';
 import { u } from '../utils';
 import common from '../styles/common';
 import styles from '../styles/offline';
@@ -25,7 +23,7 @@ export default class Offline extends React.Component {
 
                 <View style={styles.textWrapper}>
                     <Text style={styles.prim}>{ u('Опа!')}</Text>
-                    <Text style={styles.sec}>{ 'Изглежда няма връзка с Интернет. Вържи се към Мрежата и пробвай отново!' }</Text>
+                    <Text style={styles.sec}>{ 'Изглежда нямаш връзка с Интернет. Вържи се към Мрежата и пробвай отново!' }</Text>
                 </View>
           </View>
         </View>

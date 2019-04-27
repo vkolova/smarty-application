@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, models
 
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
@@ -32,7 +32,8 @@ class CreateUserAPIView(CreateAPIView):
 
 
 class LogoutUserAPIView(APIView):
-    queryset = get_user_model().objects.all()
+    # queryset = get_user_model().objects.all()
+    queryset = models.User.objects.all()
 
     def get(self, request, format=None):
         request.user.auth_token.delete()

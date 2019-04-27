@@ -11,6 +11,7 @@ import Home from './src/components/Home';
 import Splash from './src/components/Splash';
 import Settings from './src/components/Settings';
 import Question from './src/components/Question';
+import Profile from './src/components/Profile';
 import Offline from './src/components/Offline';
 
 
@@ -23,18 +24,18 @@ export default class App extends React.Component {
             isConnected: true
         };
 
-        // var chatSocket = new WebSocket('ws://' + HOST + '/test/');
+        var chatSocket = new WebSocket('ws://' + HOST + '/test/');
     
-        // chatSocket.onmessage = function(e) {
-        //     var data = JSON.parse(e.data);
-        //     var message = data['message'];
-        //     console.log(message)
-        // };
+        chatSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            console.log(message)
+        };
     
-        // chatSocket.onclose = function(e) {
-        //     chatSocket = new WebSocket('ws://' + HOST + '/test/');
-        //     console.log('Chat socket closed unexpectedly');
-        // };
+        chatSocket.onclose = function(e) {
+            chatSocket = new WebSocket('ws://' + HOST + '/test/');
+            console.log('Chat socket closed unexpectedly');
+        };
     }    
 
     componentDidMount() {
@@ -56,6 +57,7 @@ export default class App extends React.Component {
                     <Route path="/register" component={Register} />
 
                     <Route path="/home" component={Home} />
+                    <Route path='/profile/:id/' component={Profile}/>
                     <Route path='/settings' component={Settings}/>
 
                     {

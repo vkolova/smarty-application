@@ -1,7 +1,5 @@
 import React from 'react';
 import {
-    Animated,
-    TextInput,
     Text,
     View
   } from 'react-native';

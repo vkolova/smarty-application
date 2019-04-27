@@ -22,7 +22,7 @@ export default class Settings extends React.Component {
         console.log('logout');
         SecureStore.deleteItemAsync('userToken');
         request
-            .get(`/accounts/logout/`)
+            .get(`/api/accounts/logout/`)
             .then(() => {
                 this.props.history.push('/');
             })

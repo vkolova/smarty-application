@@ -37,8 +37,15 @@ export default StyleSheet.create({
         textAlign: 'center',
         textTransform: 'uppercase',
         display: 'flex',
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    btnPrimText: {
+        color: '#ffffff'
+    },
+    btnPrimIcon: {
+        color: '#ffffff'
     },
     link: {
 
