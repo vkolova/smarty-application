@@ -13,11 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Player
-        fields = ('id', 'user', 'score', 'avatar', 'level', 'games', 'wins', 'streak',)
+        fields = ('id', 'user', 'score', 'avatar', 'level', 'games', 'wins', 'streak', 'push_notification_token')
         read_only_fields = ('level', 'games', 'wins', 'streak',)
         write_once_fields = ('user',)
     
     user = UserSerializer()
+    push_notification_token = serializers.CharField(max_length=50, allow_blank=True)
     score = serializers.IntegerField()
     avatar = serializers.URLField(max_length=5000, min_length=None, allow_blank=True)
     level = serializers.SerializerMethodField()

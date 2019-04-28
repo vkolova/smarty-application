@@ -9,6 +9,7 @@ class Player(User):
     user = models.OneToOneField(User, parent_link=True, on_delete=models.CASCADE)
     score = models.BigIntegerField(default=0, help_text='Player points')
     avatar = models.TextField(max_length=500, help_text='Avatar url')
+    push_notification_token = models.CharField(max_length=50, help_text='Expo push notification token', blank=True, null=True, default=None)
 
 
 @receiver(post_save, sender=User)

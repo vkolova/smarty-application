@@ -12,6 +12,15 @@ class PlayerView(mixins.RetrieveModelMixin,
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
 
+    def partial_update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(instance=user, data=request.data, partial=True)
+
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
 
 class PlayersList(viewsets.ViewSet):
     queryset = Player.objects.all()

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, AppRegistry, NetInfo  } from 'react-native';
 import { NativeRouter, Route, Link } from 'react-router-native';
 import Sentry from 'sentry-expo';
+import { Notifications } from 'expo';
 
 import { name as appName } from './app.json';  
 
@@ -16,40 +17,30 @@ import Profile from './src/components/Profile';
 import Offline from './src/components/Offline';
 
 import { HOST } from './config';
+import registerForPushNotificationsAsync from './registerForPushNotificationsAsync';
 
 Sentry.enableInExpoDevelopment = false;
 
 Sentry.config('https://9eaadb8c901144cd9d52c9bde90663de@sentry.io/1434373').install();
 
 export default class App extends React.Component {
-    constructor () {
-        super();
-        this.state = {
-            isConnected: true
-        };
-
-        // var ws = new WebSocket('ws://' + HOST + '/users/')
-
-        // ws.onopen = () => {
-        //     ws.send(JSON.stringify({ message: 'something' }))
-        // }
-
-        // ws.onmessage = (e) => {
-        //     console.log(e.data)
-        // }
-
-        // ws.onerror = (e) => {
-        //     console.log(JSON.parse(e.message))
-        // }
-
-        // ws.onclose = (e) => {
-        //     console.log(e.code, e.reason)
-        // }
+    state = {
+        isConnected: true,
+        notification: {}
     }    
 
     componentDidMount () {
-        NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+        NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange)
+        registerForPushNotificationsAsync()
+        this._notificationSubscription = Notifications.addListener(this._handleNotification)
     }
+
+    _handleNotification = (notification) => {
+        console.log(notification)
+        if (notification.origin === 'selected') {
+            console.log('should redirect')
+        }
+    };
 
     componentWillUnmount() {
         NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "781784310760",
+    "firebase_url": "https://thrones-2ba3a.firebaseio.com",
+    "project_id": "thrones-2ba3a",
+    "storage_bucket": "thrones-2ba3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781784310760:android:ec8a2ec53090ee15",
+        "android_client_info": {
+          "package_name": "com.vkolova.thrones"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781784310760-53c2vs1djkb1b9rn0kd52kni00bjphkb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOkf7t8AJ2ba7ELuk36h_MIwHSmNJDZ_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781784310760-53c2vs1djkb1b9rn0kd52kni00bjphkb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,8 +4,8 @@ from .models import Player
 
 class PlayerAdmin(admin.ModelAdmin):
     model = Player
-    fields = ('id', 'user', 'score', 'avatar', 'games', )
-    list_display = ('id', 'user', 'score', 'level')
+    fields = ('id', 'user', 'score', 'avatar', 'games', 'push_notification_token',)
+    list_display = ('id', 'user', 'score', 'level', 'push_notification_token')
     readonly_fields = ('id', 'user', 'level', 'games')
     ordering = ('-id',)
 
