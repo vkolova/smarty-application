@@ -19,7 +19,7 @@ import styles from '../styles/settings';
 
 export default class Settings extends React.Component {
     logout = () => {
-        SecureStore.deleteItemAsync('userToken');
+        SecureStore.deleteItemAsync('user');
         request
             .get(`/api/accounts/logout/`)
             .then(() => {

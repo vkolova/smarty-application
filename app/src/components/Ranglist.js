@@ -18,7 +18,7 @@ import styles from '../styles/profile';
 const User = props => {
     const { avatar, id, score } = props.data
     const { username } = props.data.user
-    const { i } = props.index
+    const i = props.index
 
     return <Link to={`/profile/${id}/`}>
         <View
@@ -56,7 +56,9 @@ class Ranglist extends React.Component {
     componentDidMount () {
         request
             .get(`/api/players/`)
-            .then(response => this.setState({ data: response.data }))
+            .then(response => {
+                this.setState({ data: response.data });
+            })
             .catch(error => console.log(error))
             .then(() => this.setState({ loading: false }))
     }

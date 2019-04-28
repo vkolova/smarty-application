@@ -2,6 +2,13 @@ import os
 import psycopg2
 import dj_database_url
 import django_heroku
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://9eaadb8c901144cd9d52c9bde90663de@sentry.io/1434373",
+    integrations=[DjangoIntegration()]
+)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,6 +40,7 @@ INSTALLED_APPS = [
     'questions',
     'channels',
     'players',
+    'games',
 ]
 
 MIDDLEWARE = [

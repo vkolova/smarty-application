@@ -2,11 +2,28 @@ import React  from 'react';
 import { View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Link } from 'react-router-native';
+import { SecureStore } from 'expo';
 
 import styles from '../styles/navigation';
 
 
 export default class Navigation extends React.Component {
+  state = {
+    id: null
+  }
+
+  componentDidMount () {
+    SecureStore.getItemAsync('user')
+    .then(user => {
+      user = JSON.parse(user)
+      console.log("??", user)
+      if (user.id) {
+        this.setState({ id: user.id })
+      }
+    })
+    .catch(err => console.log(err))
+  }
+
   render () {
     return (
         <View style={styles.navigation}>
@@ -26,7 +43,7 @@ export default class Navigation extends React.Component {
             />
           </Link>
 
-          <Link to='/profile/7/'>
+          <Link to={`/profile/${this.state.id}/`}>
             <Icon
               name='user'
               type='feather'

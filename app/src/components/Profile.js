@@ -39,7 +39,7 @@ class Profile extends React.Component {
             </React.Fragment>
         }
 
-        const { avatar, level, score } = this.state.data;
+        const { avatar, level, score, games, streak, wins } = this.state.data;
         const { username } = this.state.data.user;
         
         return <React.Fragment>
@@ -55,13 +55,13 @@ class Profile extends React.Component {
                         </View>
                         <View style={styles.vl}/>
                         <View style={styles.mainInfoCard}>
-                            <Text>{ score }</Text>
-                            <Text>{ u('Точки') }</Text>
+                            <Text>{ games }</Text>
+                            <Text>{ u('игри') }</Text>
                         </View>
                         <View style={styles.vl}/>
                         <View style={styles.mainInfoCard}>
-                            <Text>{ 0 }</Text>
-                            <Text>{ u('Игри') }</Text>
+                            <Text>{ streak }</Text>
+                            <Text>{ u('поред') }</Text>
                         </View>
                     </View>
                 </View>

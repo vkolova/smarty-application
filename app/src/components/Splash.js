@@ -16,11 +16,11 @@ import common from '../styles/common';
 
 export default class Splash extends React.Component {
   componentDidMount () {
-    SecureStore.getItemAsync('userToken')
-    .then(token => {
-      console.log(token)
-      if (token) {
-        request.defaults.headers.common.Authorization = `Token ${token}`;
+    SecureStore.getItemAsync('user')
+    .then(user => {
+      user = JSON.parse(user)
+      if (user.token) {
+        request.defaults.headers.common.Authorization = `Token ${user.token}`;
         this.props.history.push('/home');
       }
     })

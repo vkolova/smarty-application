@@ -1,11 +1,14 @@
 from django.conf.urls import url
-from rest_framework.authtoken.views import obtain_auth_token
-from .views import CreateUserAPIView, LogoutUserAPIView
 
+from .views import (
+    CreateUserAPIView,
+    LogoutUserAPIView,
+    LoginUserAPIView
+)
 
 urlpatterns = [
     url(r'^login/$',
-        obtain_auth_token,
+        LoginUserAPIView.as_view(),
         name='auth_user_login'),
     url(r'^register/$',
         CreateUserAPIView.as_view(),

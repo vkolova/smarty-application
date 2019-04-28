@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, AppRegistry, NetInfo  } from 'react-native';
 import { NativeRouter, Route, Link } from 'react-router-native';
-import { Font } from 'expo';
+import Sentry from 'sentry-expo';
 
 import { name as appName } from './app.json';  
 
@@ -15,8 +15,11 @@ import Question from './src/components/Question';
 import Profile from './src/components/Profile';
 import Offline from './src/components/Offline';
 
-
 import { HOST } from './config';
+
+Sentry.enableInExpoDevelopment = false;
+
+Sentry.config('https://9eaadb8c901144cd9d52c9bde90663de@sentry.io/1434373').install();
 
 export default class App extends React.Component {
     constructor () {
@@ -25,21 +28,26 @@ export default class App extends React.Component {
             isConnected: true
         };
 
-        var chatSocket = new WebSocket('ws://' + HOST + '/test/');
-    
-        chatSocket.onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            var message = data['message'];
-            console.log(message)
-        };
-    
-        chatSocket.onclose = function(e) {
-            chatSocket = new WebSocket('ws://' + HOST + '/test/');
-            console.log('Chat socket closed unexpectedly');
-        };
+        // var ws = new WebSocket('ws://' + HOST + '/users/')
+
+        // ws.onopen = () => {
+        //     ws.send(JSON.stringify({ message: 'something' }))
+        // }
+
+        // ws.onmessage = (e) => {
+        //     console.log(e.data)
+        // }
+
+        // ws.onerror = (e) => {
+        //     console.log(JSON.parse(e.message))
+        // }
+
+        // ws.onclose = (e) => {
+        //     console.log(e.code, e.reason)
+        // }
     }    
 
-    componentDidMount() {
+    componentDidMount () {
         NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     }
 

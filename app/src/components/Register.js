@@ -38,7 +38,7 @@ class Register extends React.Component {
       .then(response => {
         const { token } = response.data;
         request.defaults.headers.common.Authorization = `Token ${token}`;
-        SecureStore.setItemAsync('userToken', token, {
+        SecureStore.setItemAsync('user', JSON.stringify(response.data), {
           keychainAccessible: SecureStore.WHEN_UNLOCKED
         })
         this.props.history.push('/home');

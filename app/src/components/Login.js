@@ -35,10 +35,10 @@ class Login extends React.Component {
         }
       )
       .then(response => {
-        console.log(response)
         const { token } = response.data;
         request.defaults.headers.common.Authorization = `Token ${token}`;
-        SecureStore.setItemAsync('userToken', token, {
+        console.log(response.data)
+        SecureStore.setItemAsync('user', JSON.stringify(response.data), {
           keychainAccessible: SecureStore.WHEN_UNLOCKED
         })
         this.props.history.push('/home');
