@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
     header: {
         width: '100%',
-        paddingTop: 30,
+        // paddingTop: '3%',
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
@@ -11,7 +11,7 @@ export default StyleSheet.create({
     },
     title: {
         fontSize: 36,
-        marginTop: 20
+        marginTop: '3%'
     },
     backIcon: {
         marginLeft: -25,

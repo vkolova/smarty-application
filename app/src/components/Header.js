@@ -11,13 +11,13 @@ import styles from '../styles/header';
 
 const Header = ({ link, title }) => (
     <View style={styles.header}>
-        <Link to={link}>
+        {/* <Link to={link}>
             <Icon
                 name='chevron-left'
                 type='feather'
                 iconStyle={styles.backIcon}
             />
-        </Link>
+        </Link> */}
         <Text style={styles.title}>{ u(title) }</Text>
     </View>
 );
