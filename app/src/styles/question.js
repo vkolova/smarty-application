@@ -11,17 +11,21 @@ export default StyleSheet.create({
         backgroundColor: '#eff3f9'
     },
     questionView: {
-        paddingTop: 15,
-        paddingBottom: 15,
-        paddingLeft: 15,
-        paddingRight: 15,
+        width: '90%',
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
         display: 'flex',
         flex: 2,
         alignItems: 'center',
         justifyContent: 'center'
     },
     question: {
-        fontSize: 24
+        fontSize: 18,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     answersWrapper: {
         width: '100%',
@@ -37,11 +41,19 @@ export default StyleSheet.create({
         width: '70%',
         marginTop: 15,
         marginBottom: 15,
+        paddingTop: 15,
+        paddingBottom: 15,
+        paddingLeft: 15,
+        paddingRight: 15,
         color: '#ffffff',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        borderRadius: 15
+    },
+    selectedAnswer: {
+        backgroundColor: '#e3e6ed'
     },
     answerText: {
         flex: 1
@@ -49,5 +61,12 @@ export default StyleSheet.create({
     letter: {
         marginRight: 15,
         fontWeight: 'bold'
+    },
+    timer: {
+        height: 7,
+        left: 0,
+        top: 0,
+        position: 'absolute',
+        backgroundColor: '#d01c1f'
     }
 });

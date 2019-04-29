@@ -1,7 +1,8 @@
 import React  from 'react';
 import {
   View,
-  Text
+  Text,
+  ImageBackground
 } from 'react-native';
 import { Link } from 'react-router-native';
 import { SecureStore } from 'expo';
@@ -48,41 +49,43 @@ class Login extends React.Component {
 
   render () {
     return (
-      <View style={common.pageWrapper}>
-        <Header
-          link='/'
-          title='Вход'
-        />
-
-        <View style={styles.form}>
-          <Input
-            icon='user'
-            label='Потребител'
-            onChangeText={this.onUsernameChange}
-            value={this.state.username}
-          />
-          <Input
-            icon='lock'
-            label='Парола'
-            onChangeText={this.onPasswordChange}
-            value={this.state.password}
-            additional={{
-              'secureTextEntry': true
-            }}
+      <ImageBackground source={require('../../assets/bg-2.png')} style={common.pageWithImage}>
+        <View style={common.pageWrapper}>
+          <Header
+            link='/'
+            title='Вход'
           />
 
-          <Text
-            style={common.btnPrim}
-            onPress={this.onLoginPress}
-          >{ u('Вход') }</Text>
+          <View style={styles.form}>
+            <Input
+              icon='user'
+              label='Потребител'
+              onChangeText={this.onUsernameChange}
+              value={this.state.username}
+            />
+            <Input
+              icon='lock'
+              label='Парола'
+              onChangeText={this.onPasswordChange}
+              value={this.state.password}
+              additional={{
+                'secureTextEntry': true
+              }}
+            />
+
+            <Text
+              style={common.btnPrim}
+              onPress={this.onLoginPress}
+            >{ u('Вход') }</Text>
+          </View>
+          
+          <View style={styles.footer}>
+            <Link to='/register' style={styles.bottomLink}>
+              <Text>{ 'Нямаш профил?' }</Text>
+            </Link>
+          </View>
         </View>
-        
-        <View style={styles.footer}>
-          <Link to='/register' style={styles.bottomLink}>
-            <Text>{ 'Нямаш профил?' }</Text>
-          </Link>
-        </View>
-      </View>
+      </ImageBackground>
     );
   }
 }

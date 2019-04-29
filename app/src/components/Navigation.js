@@ -15,8 +15,8 @@ export default class Navigation extends React.Component {
   componentDidMount () {
     SecureStore.getItemAsync('user')
     .then(user => {
-      user = JSON.parse(user)
-      if (user.id) {
+      if (user) {
+        user = JSON.parse(user)
         this.setState({ id: user.id })
       }
     })

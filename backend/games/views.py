@@ -5,6 +5,7 @@ from exponent_server_sdk import PushMessage
 import random
 
 from players.models import Player
+from players.serializers import PlayerSerializer, SimplePlayerSerializer
 from players.notifications import send_push_message
 from questions.models import Question
 
@@ -24,19 +25,23 @@ class GameView(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         opponent = self.request.data.get('opponent', None)
-        if opponent:
-            ids = (self.request.user.id, opponent)
-        else:
-            ids = (self.request.user.id,)
+        ids = (self.request.user.id, opponent) if opponent else (self.request.user.id,)
         
+        creator = Player.objects.get(pk=self.request.user.id)
         opponent = Player.objects.get(pk=opponent)
+        players = Player.objects.filter(pk__in=ids)
+
+        serializer.save(players=players)
+    
         send_push_message(PushMessage(
             to=opponent.push_notification_token,
             title='Покана за игра',
             body='Поканиха Ви за игра',
-            data={'a': 'bb'}
+            priority='high',
+            channel_id='game_invite',
+            data={
+                'invited_by': SimplePlayerSerializer().to_representation(creator),
+                'channel': serializer.instance.channel.hex
+            }
         ))
-
-        players = Player.objects.filter(pk__in=ids)
-        serializer.save(players=players)
     

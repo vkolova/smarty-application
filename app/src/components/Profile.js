@@ -4,6 +4,7 @@ import {
     Text,
     Image
 } from 'react-native';
+import { Icon } from 'react-native-elements';
 
 import Navigation from './Navigation';
 
@@ -63,6 +64,14 @@ class Profile extends React.Component {
                             <Text>{ streak }</Text>
                             <Text>{ u('поред') }</Text>
                         </View>
+                    </View>
+
+                    <View>
+                        <View>
+
+                            <Text>{ u('играй') }</Text>
+                        </View>
+
                     </View>
                 </View>
             </View>

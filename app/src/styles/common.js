@@ -12,7 +12,8 @@ export default StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'space-between',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        resizeMode: 'cover'
     },
     pageNoPadding: {
         width: '100%',
@@ -42,7 +43,7 @@ export default StyleSheet.create({
         display: 'flex',
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         flexDirection: 'column',
         resizeMode: 'cover'
     },

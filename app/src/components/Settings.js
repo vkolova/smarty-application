@@ -16,7 +16,6 @@ import request from '../request';
 import common from '../styles/common';
 import styles from '../styles/settings';
 
-
 export default class Settings extends React.Component {
     logout = () => {
         SecureStore.deleteItemAsync('user');

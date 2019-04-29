@@ -1,8 +1,9 @@
 import React from 'react';
 import {
     Text,
-    View
-  } from 'react-native';
+    View,
+    TouchableWithoutFeedback
+} from 'react-native';
 
 import styles from '../styles/question';
 
@@ -13,31 +14,88 @@ const lettersMap = {
     3: 'Г'
 };
 
+class Answer extends React.Component {
+    submitAnswer = () => {
+        const { parent, a } = this.props;
+        parent.submitAnswer(a.id);
+    }
+
+    render () {
+        const { a, i, selected } = this.props; 
+        const selectedStyles = selected
+            ? styles.selectedAnswer
+            : {}
+
+        return <TouchableWithoutFeedback onPress={this.submitAnswer}>
+            <View style={{ ...styles.answer, ...selectedStyles }}>
+                <Text style={styles.letter}>{ `${lettersMap[i]}.` }</Text>
+                <Text style={styles.answerText}>{ a.content }</Text>
+            </View>
+        </TouchableWithoutFeedback>
+    }
+}
+
 export default class Question extends React.Component {
     state = {
+        remaining: 10,
         selected: null
     };
 
+    componentDidMount () {
+        this.interval = setInterval(() => {
+            const { remaining, selected } = this.state;
+            if (remaining === 0) {
+                !selected && this.submitAnswer(0);
+            } else {
+                this.setState({ remaining: this.state.remaining - 1 })
+            }
+        }, 1000)
+    }
+
+    submitAnswer = id => {
+        if (this.state.selected) return;
+
+        this.setState({ selected: id })
+        clearInterval(this.interval)
+
+        const { ws } = this.props;
+
+        const data = JSON.stringify({
+            type: 'question_answer',
+            data: id
+        })    
+        ws.send(data)
+    }
+
     render () {
-        const answers = [
-            'битката при с. Ключ през 1014 г.',
-            'въстанието срещу византийската власт на Георги Войтех през 1072 г.',
-            'преминаването на Третия кръстоносен поход (1189 – 1192) през българските земи',
-            'възкачването на Константин Тих Асен на българския престол през 1257 г.'
-        ];
-        const question = 'Кое събитие се е случило през първата половина на XI век?';
+        const { content, answers, ws } = this.props;
+        const { selected, remaining } = this.state;
+
         return <View style={styles.questionWrapper}>
+            <View
+                style={{
+                    ...styles.timer,
+                    width: `${remaining * 10}%`
+              }}
+            />
+
+            { this.props.children }
+
             <View style={styles.questionView}>
-                <Text style={styles.question}>{ question }</Text>
+                <Text style={styles.question}>{ content }</Text>
             </View>
 
             <View style={styles.answersWrapper}>
                 {
                     answers.map((a, i) =>
-                        <View key={i.toString()} style={styles.answer}>
-                            <Text style={styles.letter}>{ `${lettersMap[i]}.` }</Text>
-                            <Text style={styles.answerText}>{a}</Text>
-                        </View>
+                        <Answer
+                            key={`a-${a.id.toString()}`}
+                            a={a}
+                            i={i}
+                            ws={ws}
+                            selected={selected === a.id}
+                            parent={this}
+                        />
                     )
                 }
             </View>

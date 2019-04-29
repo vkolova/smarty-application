@@ -10,6 +10,19 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'id')
 
 
+class SimplePlayerSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = Player
+        fields = ('id', 'avatar', 'username')
+        read_only_fields = ('id', 'username')
+
+    username = serializers.SerializerMethodField()
+    avatar = serializers.URLField(max_length=5000, min_length=None, allow_blank=True)
+
+    def get_username(self, obj):
+        return obj.user.username
+
+
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Player

@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from questions.models import Question
 from questions.serializers import QuestionSerializer
 from games.models import Game
+from games.serializers import GameSerializer
 
 class GameController(WebsocketConsumer):
     def connect(self):
@@ -23,7 +24,12 @@ class GameController(WebsocketConsumer):
 
         self.accept()
         self.send(text_data=json.dumps({
-            'message': 'Connected as %s' % self.user.username 
+            'type': 'notification',
+            'data': 'Connected as %s' % self.user.username 
+        }))
+        self.send(text_data=json.dumps({
+            'type': 'game_update',
+            'data': GameSerializer().to_representation(self.game)
         }))
 
         self.load_question()
@@ -36,14 +42,14 @@ class GameController(WebsocketConsumer):
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        data = text_data_json['data']
         type = text_data_json['type']
 
         async_to_sync(self.channel_layer.group_send)(
             self.game_group,
             {
                 'type': type,
-                'message': message
+                'data': data
             }
         )
     
@@ -52,34 +58,38 @@ class GameController(WebsocketConsumer):
         return User.objects.get(auth_token=token)
     
     def load_question(self):
-        # count = Question.objects.all().count()
-        # slice = random.random() * (count - 1)
-        # q = Question.objects.all()[slice: slice+1][0]
-        # self.game.current_question = q
-        # self.game.save()
+        q = self.game.current_question
+        if not q:
+            count = Question.objects.all().count()
+            slice = random.random() * (count - 1)
+            q = Question.objects.all()[slice: slice+1][0]
+            self.game.current_question = q
+            self.game.save()
         q = self.game.current_question
         data = json.dumps({
-            'question': QuestionSerializer(instance=q).to_representation(q)
+            'type': 'question_update',
+            'data': QuestionSerializer().to_representation(q)
         })
         self.send(text_data=data)
 
 
     def game_message(self, event):
-        message = event['message']
+        data = event['data']
 
         self.send(text_data=json.dumps({
-            'message': message
+            'data': data
         }))
     
-    def game_answer(self, event):
-        message = event['message']
-        if message is self.game.current_question.correct_answer():
+    def question_answer(self, event):
+        data = event['data']
+        if data is self.game.current_question.correct_answer():
             print("CORRECT!")
         else:
             print("LOSER!")
         
         data = json.dumps({
-            'message': 'ok'
+            'type': 'notification',
+            'data': 'ok'
         })
         self.send(text_data=data)
 

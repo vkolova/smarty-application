@@ -12,11 +12,13 @@ def send_push_message(message):
     except PushServerError as exc:
         raise
     except (ConnectionError, HTTPError) as exc:
-        raise self.retry(exc=exc)
+        # raise self.retry(exc=exc)
+        raise
     try:
         response.validate_response()
     except DeviceNotRegisteredError:
         from notifications.models import PushToken
         PushToken.objects.filter(token=token).update(active=False)
     except PushResponseError as exc:
-        raise self.retry(exc=exc)
+        # raise self.retry(exc=exc)
+        raise

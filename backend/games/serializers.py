@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from players.serializers import UserSerializer
+from players.serializers import UserSerializer, SimplePlayerSerializer
 from questions.serializers import QuestionSerializer
 from .models import Game
 
@@ -13,7 +13,7 @@ class GameSerializer(serializers.ModelSerializer):
         write_once_fields = ('channel')
 
     channel = serializers.UUIDField(format='hex_verbose', required=False)
-    players = UserSerializer(many=True, required=False)
+    players = SimplePlayerSerializer(many=True, required=False)
 
     state = serializers.CharField(max_length=15, allow_blank=False, required=False)
     created = serializers.DateTimeField(required=False)

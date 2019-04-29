@@ -15,9 +15,11 @@ import Settings from './src/components/Settings';
 import Question from './src/components/Question';
 import Profile from './src/components/Profile';
 import Offline from './src/components/Offline';
+import Error from './src/components/Error';
+import Invite from './src/components/Invite';
+import Game from './src/components/Game';
 
 import { HOST } from './config';
-import registerForPushNotificationsAsync from './registerForPushNotificationsAsync';
 
 Sentry.enableInExpoDevelopment = false;
 
@@ -26,19 +28,27 @@ Sentry.config('https://9eaadb8c901144cd9d52c9bde90663de@sentry.io/1434373').inst
 export default class App extends React.Component {
     state = {
         isConnected: true,
-        notification: {}
+        hasError: false,
+        notification: null
     }    
 
     componentDidMount () {
         NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange)
-        registerForPushNotificationsAsync()
-        this._notificationSubscription = Notifications.addListener(this._handleNotification)
+        Notifications.createChannelAndroidAsync('game_invite', {
+            name: 'Покани за игра',
+            sound: true,
+            priority: 'max'
+        });
+        this._notificationSubscription = Notifications.addListener(this.handleNotification)
     }
 
-    _handleNotification = (notification) => {
-        console.log(notification)
+    componentDidCatch(error, info) {
+        this.setState({ hasError: true})
+    }
+
+    handleNotification = (notification) => {
         if (notification.origin === 'selected') {
-            console.log('should redirect')
+            this.setState({ notification })
         }
     };
 
@@ -49,6 +59,8 @@ export default class App extends React.Component {
     handleConnectivityChange = isConnected => this.setState({ isConnected });
 
     render () {
+        const { isConnected, hasError, notification } = this.state;
+    
         return (
             <NativeRouter>
                 <View style={styles.container}>
@@ -57,14 +69,26 @@ export default class App extends React.Component {
                     <Route path='/register' component={Register} />
 
                     <Route path='/home' component={Home} />
+                    <Route path='/game/:uuid/' component={Game} />
+                    <Route path='/invite' component={Invite} />
                     <Route path='/ranglist' component={Ranglist}/>
                     <Route path='/profile/:id/' component={Profile}/>
                     <Route path='/settings' component={Settings}/>
 
                     {
-                        !this.state.isConnected &&
+                        !isConnected &&
                         <Offline/>
                     }
+                    {
+                        hasError &&
+                        <Error/>
+                    }
+
+                    {
+                        notification && notification.origin === 'selected' &&
+                        <Invite notification={notification} parent={this}/>
+                    }
+
                 </View>
             </NativeRouter>
         );

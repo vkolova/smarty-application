@@ -18,8 +18,8 @@ export default class Splash extends React.Component {
   componentDidMount () {
     SecureStore.getItemAsync('user')
     .then(user => {
-      user = JSON.parse(user)
-      if (user.token) {
+      if (user) {
+        user = JSON.parse(user)
         request.defaults.headers.common.Authorization = `Token ${user.token}`;
         this.props.history.push('/home');
       }
