@@ -53,23 +53,20 @@ class Game extends React.Component {
         loading: true,
         game: null,
         question: null,
-        scores: null
+        scores: null,
+        roundWinner: null
     }
 
     eventHandlers = {
         notification: () => {},
-        game_update: game => {
-            this.setState({ game })
-        },
-        question_update: question => {
-            this.setState({ question })
-        }
+        game_update: game => this.setState({ game }),
+        scores_update: scores => this.setState({ scores }),
+        round_winner: roundWinner => this.setState({ roundWinner, question: null }),
+        question_update: question => this.setState({ question, roundWinner: null })
     }
 
     componentDidMount () {
-        console.log(this.props.match.params.uuid)
         const uuid = this.props.match.params.uuid;
-        // const uuid = '8dda1e0f-c8d5-4896-b522-3bc36bd60c65'
 
         SecureStore.getItemAsync('user')
             .then(user => {
@@ -80,11 +77,12 @@ class Game extends React.Component {
                     this.ws = new WebSocket(socketURL)
 
                     this.ws.onopen = () => {
-                        // ws.send(JSON.stringify({ message: 'ready' }))
+                        this.ws.send(JSON.stringify({ type: 'game_connect', data: 'ok', user: 'vkolova' }))
                     }
 
                     this.ws.onmessage = e => {
                         const { type, data } = JSON.parse(e.data);
+                        console.log(type)
                         this.eventHandlers[type](data)
                     }
 
@@ -100,18 +98,29 @@ class Game extends React.Component {
             .catch(err => console.log(err))
     }
 
-    componentWillUnmount () {}
-
     render () {
-        const { game, question, player } = this.state;
+        const { game, question, player, scores, roundWinner } = this.state;
 
         return <View style={common.pageNoPadding}>
-            
+            {
+                game && ['initial', 'preparing'].includes(game.state) &&
+                <Text>{ u('изчакване на играч') }</Text>
+            }
+
+            {
+                game && game.state == 'rejected' &&
+                <Text>{ u('отрязаха те :/') }</Text>
+            }
+
+            {
+                roundWinner &&
+                <Text>{ u(`рунда печели ${roundWinner}`)}</Text>
+            }
             
             {
-                question &&
+                game && game.state == 'in_progress' && question && scores &&
                 <Question {...question} ws={this.ws}>
-                    <Scores player={player} players={game.players}/>
+                    <Scores player={player} players={game.players} scores={scores}/>
                 </Question>
             }
         </View>

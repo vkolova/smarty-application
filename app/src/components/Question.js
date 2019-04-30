@@ -45,6 +45,7 @@ export default class Question extends React.Component {
         this.interval = setInterval(() => {
             const { remaining, selected } = this.state;
             if (remaining === 0) {
+                console.log('submit 0')
                 !selected && this.submitAnswer(0);
             } else {
                 this.setState({ remaining: this.state.remaining - 1 })
@@ -53,7 +54,7 @@ export default class Question extends React.Component {
     }
 
     submitAnswer = id => {
-        if (this.state.selected) return;
+        // if (this.state.selected) return;
 
         this.setState({ selected: id })
         clearInterval(this.interval)

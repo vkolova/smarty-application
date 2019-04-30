@@ -50,7 +50,7 @@ const User = props => {
 class Ranglist extends React.Component {
     state = {
         loading: true,
-        data: {}
+        data: null
     }
 
     componentDidMount () {
@@ -74,7 +74,7 @@ class Ranglist extends React.Component {
         return  <React.Fragment>
             <View style={common.pageList}>
                 {
-                    this.state.data
+                    this.state.data && this.state.data
                         .map((p, i) =>
                             <User data={p} key={p.id} index={i}/>
                         )

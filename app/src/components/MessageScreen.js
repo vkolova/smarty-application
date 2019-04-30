@@ -23,7 +23,7 @@ export default class MessageScreen extends React.Component {
 
                 <View style={styles.textWrapper}>
                     <Text style={styles.prim}>{ u(this.props.title)}</Text>
-                    <Text style={styles.sec}>{ this.props.bodr }</Text>
+                    <Text style={styles.sec}>{ this.props.body }</Text>
                 </View>
           </View>
         </View>

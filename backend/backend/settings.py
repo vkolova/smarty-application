@@ -3,12 +3,15 @@ import psycopg2
 import dj_database_url
 import django_heroku
 import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 
-sentry_sdk.init(
-    dsn="https://9eaadb8c901144cd9d52c9bde90663de@sentry.io/1434373",
-    integrations=[DjangoIntegration()]
-)
+is_prod = os.environ.get('IS_HEROKU', False)
+
+if is_prod:
+    from sentry_sdk.integrations.django import DjangoIntegration
+    sentry_sdk.init(
+        dsn="https://9eaadb8c901144cd9d52c9bde90663de@sentry.io/1434373",
+        integrations=[DjangoIntegration()]
+    )
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -71,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+# WSGI_APPLICATION = 'backend.wsgi.application'
 ASGI_APPLICATION = 'routing.application'
 
 CHANNEL_LAYERS = {
@@ -79,6 +82,18 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer'
     }
 }
+
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         # "BACKEND": "asgi_redis.RedisChannelLayer",
+#         # "ROUTING": "routing.application",
+#         'CONFIG': {
+#             "hosts": ["redis://h:p29d694b1863cbad9f427ae6ff5e2ecf15f0ccf8d1724331ac7b78a2711987fd4@ec2-63-32-23-43.eu-west-1.compute.amazonaws.com:14489"],
+#         },
+#     },
+# }
+
 
 
 # Database
@@ -88,7 +103,7 @@ DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=3, ssl_require=True)
+    'default': dj_database_url.config(conn_max_age=5, ssl_require=True)
 }
 
 # Password validation

@@ -2,9 +2,10 @@ import React from 'react';
 import {
     View,
     Text,
-    Image
+    Image,
+    TouchableWithoutFeedback
 } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { SecureStore } from 'expo';
 
 import Navigation from './Navigation';
 
@@ -17,31 +18,56 @@ import styles from '../styles/profile';
 class Profile extends React.Component {
     state = {
         loading: true,
-        data: {}
+        data: null,
+        showPlayBtn: false
     }
 
     componentDidMount () {
-        request.get(`/api/player/${this.props.match.params.id}/`)
-        .then(response => {
-            console.log(response.data);
-            this.setState({ data: response.data });
+        request
+            .get(`/api/player/${this.props.match.params.id}/`)
+            .then(response => {
+                this.setState({ data: response.data });
+            })
+            .catch(error => console.log(error))
+            .then(() => {
+                this.setState({ loading: false });
+            })
+
+        SecureStore.getItemAsync('user')
+            .then(user => {
+                if (user) {
+                    user = JSON.parse(user)
+                    if (user.id != this.props.match.params.id) {
+                        this.setState({ showPlayBtn: true })
+                    } 
+                }
+            })
+            .catch(err => console.log(err))
+    }
+
+    invite = () => {
+        request
+        .post('/api/games/', {
+            opponent: this.props.match.params.id
+        })
+        .then(result => {
+            this.props.history.push(`/game/${result.data.channel}/`)
         })
         .catch(error => console.log(error))
-        .then(() => {
-            this.setState({ loading: false });
-        })
     }
 
     render () {
-        if (this.state.loading || !this.state.data) {
+        const { loading, data, showPlayBtn } = this.state;
+
+        if (loading || !data) {
             return <React.Fragment>
                 <Text>{'LOADING...'}</Text>
                 <Navigation/>
             </React.Fragment>
         }
 
-        const { avatar, level, score, games, streak, wins } = this.state.data;
-        const { username } = this.state.data.user;
+        const { avatar, level, score, games, streak, wins } = data;
+        const { username } = data.user;
         
         return <React.Fragment>
             <View style={common.pageNoPadding}>
@@ -67,11 +93,14 @@ class Profile extends React.Component {
                     </View>
 
                     <View>
-                        <View>
-
-                            <Text>{ u('играй') }</Text>
-                        </View>
-
+                        {
+                            showPlayBtn &&
+                            <TouchableWithoutFeedback onPress={this.invite}>
+                                <View style={common.btnPrim}>
+                                    <Text style={common.btnPrimText}>{ u('играй') }</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        }
                     </View>
                 </View>
             </View>

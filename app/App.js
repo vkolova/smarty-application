@@ -43,6 +43,7 @@ export default class App extends React.Component {
     }
 
     componentDidCatch(error, info) {
+        Sentry.captureException(error, info)
         this.setState({ hasError: true})
     }
 
@@ -83,12 +84,10 @@ export default class App extends React.Component {
                         hasError &&
                         <Error/>
                     }
-
                     {
                         notification && notification.origin === 'selected' &&
                         <Invite notification={notification} parent={this}/>
                     }
-
                 </View>
             </NativeRouter>
         );

@@ -6,7 +6,7 @@ import MessageScreen from './MessageScreen';
 const Error = props =>
   <MessageScreen
     icon='alert-circle'
-    title={'Уфф!'}
+    title={'Уф!'}
     body={'Възникна грешка. Затвори приложението и опитай отново.'}
   />
 

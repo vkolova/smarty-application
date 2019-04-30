@@ -2,10 +2,11 @@ from django.conf.urls import url
 from channels.consumer import SyncConsumer
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+import asyncio
 from asgiref.sync import async_to_sync
 import json
 import random
-from time import sleep
 from datetime import datetime
 
 from django.contrib.auth.models import User
@@ -18,25 +19,30 @@ from games.serializers import GameSerializer
 GAME_ROUNDS_COUNT = 10
 QUESTION_POINTS = 10
 
-class GameController(WebsocketConsumer):
-    def connect(self):
+class GameController(AsyncWebsocketConsumer):
+    async def connect(self):
         self.game_uuid = self.scope['url_route']['kwargs']['game_uuid']
         self.game_group = 'game_%s' % self.game_uuid
         
-        self.user = self.get_user()
+        self.user = await self.get_user()
         print(self.user.username, 'connected to socket')
 
-        async_to_sync(self.channel_layer.group_add)(
+        await self.channel_layer.group_add(
             self.game_group,
             self.channel_name
         )
 
-        self.accept()
-        self.send_game_update()
+        await self.accept()
+        await self.send_game_update()
     
     @property
+    @database_sync_to_async
     def game(self):
         return Game.objects.get(channel=self.game_uuid)
+
+    @database_sync_to_async
+    def save(self, item):
+        item.save()
     
     def initialize_game_data(self):
         data = {
@@ -46,28 +52,29 @@ class GameController(WebsocketConsumer):
         }
         return data
 
-    def save_connected(self):
-        game = self.game
-
+    async def save_connected(self):
+        game = await self.game
         if not game.data:
             game.data = {
-                'connected': [ self.user.username ],
+                'connected': [],
                 'round': self.initialize_round_data(),
                 'score': self.players_obj(0) 
             }
-            game.save()
         else:
+            print("!!!!")
             connected = game.data['connected']
             connected.append(self.user.username)
-            game.data = {
-                **game.data,
-                'connected': list(set(connected))
-            }
-            game.save()
+            game.data['connected'] = list(set(connected)) # remove dublicates
+            # await database_sync_to_async(game.save)()
+        # import pdb; pdb.set_trace()
+        # await game.save()
+        # await database_sync_to_async(game.save)()
+        await self.save(game)
 
-        self.send(text_data=json.dumps({
+        print('notify connected')
+        await self.send(text_data=json.dumps({
             'type': 'notification',
-            'data': 'Welcome, %s' % self.user.username
+            'data': 'Connected.'
         }))
         
 
@@ -78,12 +85,10 @@ class GameController(WebsocketConsumer):
         }
         return self.players_obj(player_data)
 
-    def check_all_connected(self):
-        print('check_all_connected')
-
-        game = self.game
-
-        print("~~~", game.data)
+    async def check_all_connected(self):
+        game = await self.game
+        print("game.data", game.data, game)
+        print("        ", game.data['connected'])
 
         if len(game.data['connected']) == 0:
             return False
@@ -95,146 +100,125 @@ class GameController(WebsocketConsumer):
         
         return True
 
-    def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)(
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
             self.game_group,
             self.channel_name
         )
 
-    def receive(self, text_data):
+    async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         data = text_data_json['data']
         type = text_data_json['type']
         print("~~", "receive", self.user.username, data)
 
         if type == 'game_connect':
-            self.game_connect(text_data_json)
+            await self.game_connect(text_data_json)
         if type == 'question_answer':
-            self.question_answer(text_data_json)
+            await self.question_answer(text_data_json)
     
-    def players_obj(self, value):
-        game = self.game
+    async def players_obj(self, value):
+        game = await self.game
         data = {}
         for p in [u['username'] for u in game.players.values()]:
             data[p] = value
         return data
 
-    def start_game(self):
-        game = self.game
+    async def start_game(self):
+        game = await self.game
         if game.state != 'in_progress':
-            self.new_round()
-            game.save()
+            await self.new_round()
+            await database_sync_to_async(game.save)()
         else:
-            self.send_question_update()
+            await self.send_question_update()
 
-        self.send_score_update()
+        await self.send_score_update()
         game.state = GameState.IN_PROGRESS
-        game.save()
-        self.send_game_update()
+        await database_sync_to_async(game.save)()
+        await self.send_game_update()
     
-    def game_connect(self, event):
+    async def game_connect(self, event):
         print('game_connect')
-        game = self.game
+        game = await self.game
         data = event['data']
         print("data: ", data)
-
         if data == 'ok':
             print('connect', self.user)
-            self.save_connected()
-        
-            sleep(2)
-            players_are_connected = self.check_all_connected()
+            await self.save_connected()
+            players_are_connected = await self.check_all_connected()
 
-            if self.check_all_connected():
+            if players_are_connected:
                 print('all are connected')
-                self.start_game()
+                await self.start_game()
         else:
             game.state = GameState.DECLINED
             game.finished = datetime.now()
-            game.save()
-        self.send_game_update()
+            await database_sync_to_async(game.save)()
+            await self.send_game_update()
     
-    def get_current_round(self):
-        return self.game.rounds.order_by('-id')[0]
+    async def get_current_round(self):
+        return await self.game.rounds.order_by('-id')[0]
     
-    def send_game_update(self):
-        async_to_sync(self.channel_layer.group_send)(
+    async def send_game_update(self):
+        await self.channel_layer.group_send(
             self.game_group,
             {
                 'type': 'game_update',
-                'data': GameSerializer().to_representation(self.game)
+                'data': GameSerializer().to_representation(await self.game)
             }
         )
-        # self.send(text_data=json.dumps({
-        #     'type': 'game_update',
-        #     'data': GameSerializer().to_representation(self.game)
-        # }))
     
-    def game_update(self, event):
-        print('game_update')
-        self.send(text_data=json.dumps({
-            'type': 'game_update',
-            'data': event['data']
-        }))
-    
-    def scores_update(self, event):
-        print('scores_update')
-        self.send(text_data=json.dumps({
-            'type': 'scores_update',
-            'data': event['data']
-        }))
+    async def game_update(self, event):
+        pass
 
-    def send_score_update(self):
-        async_to_sync(self.channel_layer.group_send)(
+    async def send_score_update(self):
+        await self.channel_layer.group_send(
             self.game_group,
             {
                 'type': 'scores_update',
-                'data': self.game.data['score']
+                'data': await self.game.data['score']
             }
         )
-        # self.send(text_data=json.dumps({
-        #     'type': 'scores_update',
-        #     'data': self.game.data['score']
-        # }))
     
-    def send_question_update(self):
-        print('send_question_update')
-        current_round = self.get_current_round()
-
-        async_to_sync(self.channel_layer.group_send)(
+    async def send_question_update(self):
+        current_round = await self.get_current_round()
+        await self.channel_layer.group_send(
             self.game_group,
             {
                 'type': 'question_update',
                 'data': QuestionSerializer().to_representation(current_round.question)
             }
         )
-
-        # self.send(text_data=json.dumps({
-        #     'type': 'question_update',
-        #     'data': QuestionSerializer().to_representation(current_round.question)
-        # }))
-
-
+    
+    @database_sync_to_async
     def get_user(self):
         token = self.scope['url_route']['kwargs']['user_token']
         return User.objects.get(auth_token=token)
     
+    @database_sync_to_async
     def get_question(self):
         count = Question.objects.all().count()
         slice = random.random() * (count - 1)
         question = Question.objects.all()[slice: slice+1][0]
         return question
 
-    def new_round(self):
+    async def new_round(self):
         game = self.game
-        game.data['round'] = self.initialize_round_data()
-        game.save()
-        question = self.get_question()
+        game.data['score'] = self.players_obj(0)
+        await database_sync_to_async(game.save)()
+        question = await self.get_question()
         self.current_round = Round.objects.create(game=self.game, question=question)
-        self.send_question_update()
+        await self.send_question_update()
+
+    # def game_message(self, event):
+    #     data = event['data']
+
+    #     self.send(text_data=json.dumps({
+    #         'data': data
+    #     }))
     
-    def check_all_answered(self):
-        game = self.game
+    async def check_all_answered(self):
+        game = await self.game
         current_round = self.get_current_round()
 
         for p in [u['username'] for u in game.players.values()]:
@@ -242,8 +226,9 @@ class GameController(WebsocketConsumer):
                 return False
         return True
 
-    def select_round_winner(self):
-        game = self.game
+    @database_sync_to_async
+    async def select_round_winner(self):
+        game = await self.game
         current_round = self.get_current_round()
         round_data = game.data['round']
 
@@ -263,23 +248,23 @@ class GameController(WebsocketConsumer):
         
         if winner:
             game.data['score'][winner] = game.data['score'][winner] + QUESTION_POINTS
-            game.save()
             current_round.winner = Player.objects.get(username=winner)
-            current_round.save()
+            await database_sync_to_async(current_round.save)()
 
-    def send_round_winner(self):
+    async def send_round_winner(self):
         current_round = self.get_current_round()
-        async_to_sync(self.channel_layer.group_send)(
-            self.game_group,
-            {
-                'type': 'round_winner',
-                'data': current_round.winner.username if current_round.winner else None
-            }
-        )
-        # self.send(text_data=json.dumps(data))
+        data = {
+            'type': 'round_winner',
+            'data': current_round.winner.username if current_round.winner else None
+        }
 
-    def is_score_a_tie(self):
-        game = self.game
+        await self.channel_layer.group_send(
+            self.game_group,
+            data
+        )
+
+    async def is_score_a_tie(self):
+        game = await self.game
         score_data = game.data['score']
 
         player_a = game.players.values()[0]['username']
@@ -287,12 +272,9 @@ class GameController(WebsocketConsumer):
 
         return score_data[player_a] == score_data[player_b]
 
-    def check_game_end(self):
-        print('check_game_end')
-        game = self.game
-
+    async def check_game_end(self):
+        game = await self.game
         rounds_count = len(game.rounds.all())
-        print("ROUND", rounds_count)
         is_a_tie = self.is_score_a_tie()
 
         if rounds_count == GAME_ROUNDS_COUNT and is_a_tie:
@@ -300,8 +282,9 @@ class GameController(WebsocketConsumer):
         else:
             return rounds_count == GAME_ROUNDS_COUNT
 
-    def finish_game(self):
-        game = self.game
+    @database_sync_to_async
+    async def finish_game(self):
+        game = await self.game
         score_data = game.data['score']
 
         player_a = game.players.values()[0]['username']
@@ -309,63 +292,45 @@ class GameController(WebsocketConsumer):
 
         p_a = Player.objects.get(username=player_a)
         p_a.score = p_a.score + score_data[player_a]
-        p_a.save()
+        await database_sync_to_async(p_a.save)()
 
         p_b = Player.objects.get(username=player_b)
         p_b.score = p_b.score + score_data[player_b]
-        p_b.save()
+        await database_sync_to_async(p_b.save)()
 
         game.winner = p_a if score_data[player_a] > score_data[player_b] else p_b
         game.state = GameState.FINISHED
         game.finished = datetime.now()
-        game.save()
+        await database_sync_to_async(game.save)()
 
-    def initialize_next_round(self):
-        self.new_round()
-        self.send_score_update()
-        self.send_game_update()
+    async def initialize_next_round(self):
+        await self.new_round()
 
-    def question_answer(self, event):
+    async def question_answer(self, event):
         data = event['data']
         print("~~", 'question_answer', self.user.username, data)
-        game = self.game
+        game = await self.game
         user = self.user.username
-        current_round = self.get_current_round()
+        current_round = await self.get_current_round()
 
         is_correct = data == current_round.question.correct_answer()
 
-        print("------------", game.data['round'])
         game.data['round'][user] = {
             'timestamp': datetime.now().timestamp(),
             'is_correct': is_correct
         }
-        game.save()
+        await database_sync_to_async(game.save)()
 
-        if self.check_all_answered():
+        if await self.check_all_answered():
             print("self.check_all_answered()", True)
-            self.select_round_winner()
-            self.send_round_winner()
+            await self.select_round_winner()
+            await self.send_round_winner()
 
-            if self.check_game_end():
-                self.finish_game()
-                self.send_game_update()
+            if await self.check_game_end():
+                await self.finish_game()
+                await self.send_game_update()
             else:
-                self.initialize_next_round()
-    
-    def question_update(self, event):
-        print('question_update')
-        self.send(text_data=json.dumps({
-            'type': 'question_update',
-            'data': event['data']
-        }))
-
-    def round_winner(self, event):
-        print('round_winner')
-        self.send(text_data=json.dumps({
-            'type': 'round_winner',
-            'data': event['data']
-        }))
-    
+                await self.initialize_next_round()
 
 websocket_urlpatterns = [
     url(r'^ws/game/(?P<user_token>[^/]+)/(?P<game_uuid>[^/]+)/$', GameController),
