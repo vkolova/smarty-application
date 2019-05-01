@@ -1,1 +1,1 @@
-web: sh -c 'cd ./backend && daphne -p $PORT backend.asgi:application'
+web: sh -c 'cd ./backend && daphne backend.asgi:application'
