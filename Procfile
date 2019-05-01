@@ -1,1 +1,1 @@
-web: gunicorn --worker-class eventlet -w 1 --log-level debug --bind 0.0.0.0 --pythonpath backend backend.wsgi
+web: gunicorn --worker-class eventlet -w 1 --log-level debug --do-handshake-on-connect True --bind 0.0.0.0 --pythonpath backend backend.wsgi
