@@ -1,21 +1,23 @@
-from django.conf.urls import url
-from channels.consumer import SyncConsumer
-from channels.generic.websocket import WebsocketConsumer
-from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import async_to_sync
-import json
-import random
-from time import sleep
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer
 from datetime import datetime
 
+from django.conf.urls import url
 from django.contrib.auth.models import User
+from django.db import connection
+
+from time import sleep
+import json
+import random
+
+from games.models import Game, Round, GameState
+from games.serializers import GameSerializer
 from players.models import Player
 from questions.models import Question
 from questions.serializers import QuestionSerializer
-from games.models import Game, Round, GameState
-from games.serializers import GameSerializer
 
-GAME_ROUNDS_COUNT = 10
+GAME_ROUNDS_COUNT = 5
 QUESTION_POINTS = 10
 
 class GameController(WebsocketConsumer):
@@ -55,7 +57,7 @@ class GameController(WebsocketConsumer):
                 'round': self.initialize_round_data(),
                 'score': self.players_obj(0) 
             }
-            game.save()
+            # game.save()
         else:
             connected = game.data['connected']
             connected.append(self.user.username)
@@ -63,7 +65,8 @@ class GameController(WebsocketConsumer):
                 **game.data,
                 'connected': list(set(connected))
             }
-            game.save()
+        game.save()
+        
 
         self.send(text_data=json.dumps({
             'type': 'notification',
@@ -82,6 +85,7 @@ class GameController(WebsocketConsumer):
         print('check_all_connected')
 
         game = self.game
+        
 
         print("~~~", game.data)
 
@@ -114,6 +118,8 @@ class GameController(WebsocketConsumer):
     
     def players_obj(self, value):
         game = self.game
+        
+
         data = {}
         for p in [u['username'] for u in game.players.values()]:
             data[p] = value
@@ -123,13 +129,14 @@ class GameController(WebsocketConsumer):
         game = self.game
         if game.state != 'in_progress':
             self.new_round()
-            game.save()
+            # game.save()
         else:
             self.send_question_update()
 
         self.send_score_update()
         game.state = GameState.IN_PROGRESS
         game.save()
+        
         self.send_game_update()
     
     def game_connect(self, event):
@@ -155,7 +162,9 @@ class GameController(WebsocketConsumer):
         self.send_game_update()
     
     def get_current_round(self):
-        return self.game.rounds.order_by('-id')[0]
+        current_round = self.game.rounds.order_by('-id')[0]
+        
+        return current_round
     
     def send_game_update(self):
         async_to_sync(self.channel_layer.group_send)(
@@ -165,6 +174,7 @@ class GameController(WebsocketConsumer):
                 'data': GameSerializer().to_representation(self.game)
             }
         )
+        
         # self.send(text_data=json.dumps({
         #     'type': 'game_update',
         #     'data': GameSerializer().to_representation(self.game)
@@ -192,6 +202,7 @@ class GameController(WebsocketConsumer):
                 'data': self.game.data['score']
             }
         )
+        
         # self.send(text_data=json.dumps({
         #     'type': 'scores_update',
         #     'data': self.game.data['score']
@@ -217,7 +228,9 @@ class GameController(WebsocketConsumer):
 
     def get_user(self):
         token = self.scope['url_route']['kwargs']['user_token']
-        return User.objects.get(auth_token=token)
+        user = User.objects.get(auth_token=token)
+        
+        return user
     
     def get_question(self):
         count = Question.objects.all().count()
@@ -229,12 +242,17 @@ class GameController(WebsocketConsumer):
         game = self.game
         game.data['round'] = self.initialize_round_data()
         game.save()
+        
         question = self.get_question()
+        
         self.current_round = Round.objects.create(game=self.game, question=question)
+        
+        
         self.send_question_update()
     
     def check_all_answered(self):
         game = self.game
+        
         current_round = self.get_current_round()
 
         for p in [u['username'] for u in game.players.values()]:
@@ -266,6 +284,7 @@ class GameController(WebsocketConsumer):
             game.save()
             current_round.winner = Player.objects.get(username=winner)
             current_round.save()
+        
 
     def send_round_winner(self):
         current_round = self.get_current_round()
@@ -280,6 +299,7 @@ class GameController(WebsocketConsumer):
 
     def is_score_a_tie(self):
         game = self.game
+        
         score_data = game.data['score']
 
         player_a = game.players.values()[0]['username']
@@ -290,6 +310,7 @@ class GameController(WebsocketConsumer):
     def check_game_end(self):
         print('check_game_end')
         game = self.game
+        
 
         rounds_count = len(game.rounds.all())
         print("ROUND", rounds_count)
@@ -319,6 +340,7 @@ class GameController(WebsocketConsumer):
         game.state = GameState.FINISHED
         game.finished = datetime.now()
         game.save()
+        
 
     def initialize_next_round(self):
         self.new_round()
@@ -340,6 +362,7 @@ class GameController(WebsocketConsumer):
             'is_correct': is_correct
         }
         game.save()
+        
 
         if self.check_all_answered():
             print("self.check_all_answered()", True)

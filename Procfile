@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath backend backend.wsgi
+web: gunicorn --workers 3 --max-requests 100 --pythonpath backend backend.wsgi

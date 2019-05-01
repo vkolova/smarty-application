@@ -33,9 +33,10 @@ class Invitation extends React.Component {
     }
 
     accept = () => {
-        // const { channel } = this.props.notification.data
+        const { channel } = this.props.notification.data
         this.props.parent.setState({ notification: null })
-        const channel = '9393a4f9-c908-4be0-8567-19e55daaa456'
+        // const channel = '9393a4f9-c908-4be0-8567-19e55daaa456'
+        // const channel = '687fcc2d-aaf9-4eea-a57f-0eff058c2bd5'
         this.props.history.push(`/game/${channel}/`)
     }
 

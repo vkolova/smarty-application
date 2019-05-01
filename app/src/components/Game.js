@@ -61,8 +61,10 @@ class Game extends React.Component {
         notification: () => {},
         game_update: game => this.setState({ game }),
         scores_update: scores => this.setState({ scores }),
-        round_winner: roundWinner => this.setState({ roundWinner, question: null }),
-        question_update: question => this.setState({ question, roundWinner: null })
+        round_winner: roundWinner => this.setState({ roundWinner }),
+        question_update: question => this.setState({  question: null }, () => {
+            this.setState({ question, roundWinner: null })
+        })
     }
 
     componentDidMount () {
@@ -91,7 +93,8 @@ class Game extends React.Component {
                     }
 
                     this.ws.onclose = (e) => {
-                        console.log(e.code, e.reason)
+                        console.log('CLOSED')
+                        // console.log(e.code, e.reason)
                     }
                 }
             })
@@ -113,15 +116,21 @@ class Game extends React.Component {
             }
 
             {
-                roundWinner &&
-                <Text>{ u(`рунда печели ${roundWinner}`)}</Text>
+                game && game.state == 'finished' &&
+                <Text>{ u(`${game.winner.usename} печели играта`) }</Text>
             }
-            
+
+
             {
                 game && game.state == 'in_progress' && question && scores &&
                 <Question {...question} ws={this.ws}>
                     <Scores player={player} players={game.players} scores={scores}/>
                 </Question>
+            }
+
+            {
+                roundWinner &&
+                <Text>{ u(`рунда печели ${roundWinner}`)}</Text>
             }
         </View>
     }

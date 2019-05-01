@@ -11,11 +11,11 @@ if (__DEV__) {
 }
   
 
-// const SERVER_URL = __DEV__ ? `http://${ip}:8001` : `https://thrones-tu.herokuapp.com`;
-// const HOST = __DEV__ ? `${ip}:8001` : `thrones-tu.herokuapp.com`;
+const SERVER_URL = __DEV__ ? `http://${ip}:8001` : `https://thrones-tu.herokuapp.com`;
+const HOST = __DEV__ ? `${ip}:8001` : `thrones-tu.herokuapp.com`;
 
-const SERVER_URL = `http://${ip}:8001`;
-const HOST = `${ip}:8001`
+// const SERVER_URL = `http://${ip}:8001`;
+// const HOST = `${ip}:8001`
 
 export {
     SERVER_URL,

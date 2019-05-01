@@ -54,7 +54,7 @@ export default class Question extends React.Component {
     }
 
     submitAnswer = id => {
-        // if (this.state.selected) return;
+        if (this.state.selected) return;
 
         this.setState({ selected: id })
         clearInterval(this.interval)
