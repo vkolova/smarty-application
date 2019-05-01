@@ -1,2 +1,1 @@
-web: gunicorn --workers 3  --worker-class eventlet --log-level DEBUG --max-requests 100 --pythonpath backend backend.wsgi
-worker: python backend/manage.py runworker -v2
+web: gunicorn --worker-class eventlet -w 1 --log-level debug --bind 0.0.0.0:5000 --pythonpath backend backend.wsgi
