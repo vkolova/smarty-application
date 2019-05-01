@@ -1,3 +1,37 @@
 {
-    "image": "heroku/python"
+  "expo": {
+    "name": "многознайко",
+    "slug": "app",
+    "privacy": "public",
+    "sdkVersion": "32.0.0",
+    "platforms": [
+      "android"
+    ],
+    "version": "1.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#fff"
+    },
+    "androidStatusBarColor": "#ffffff",
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "package": "com.vkolova.thrones"
+    }
+  }
 }
