@@ -12,6 +12,7 @@ import { SecureStore } from 'expo';
 
 import { u } from '../utils';
 import request from '../request';
+import { SOCKET_SCHEME, HOST } from '../../config'
 
 import common from '../styles/common';
 import styles from '../styles/invite';
@@ -41,7 +42,7 @@ class Invitation extends React.Component {
     }
 
     decline = () => {
-        const socketURL = `ws://${HOST}/ws/game/${this.state.user.token}/${uuid}/`;
+        const socketURL = `${SOCKET_SCHEME}${HOST}/ws/game/${this.state.user.token}/${uuid}/`;
         this.ws = new WebSocket(socketURL)
 
         this.ws.onopen = () => {

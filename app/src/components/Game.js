@@ -13,7 +13,7 @@ import Question from './Question';
 import { u } from '../utils';
 import request from '../request';
 
-import { HOST } from '../../config';
+import { HOST, SOCKET_SCHEME } from '../../config';
 
 import common from '../styles/common';
 import styles from '../styles/game';
@@ -75,7 +75,7 @@ class Game extends React.Component {
                 if (user) {
                     user = JSON.parse(user)
                     this.setState({ player: user.id })
-                    const socketURL = `ws://${HOST}/ws/game/${user.token}/${uuid}/`;
+                    const socketURL = `${SOCKET_SCHEME}${HOST}/ws/game/${user.token}/${uuid}/`;
                     this.ws = new WebSocket(socketURL)
 
                     this.ws.onopen = () => {
