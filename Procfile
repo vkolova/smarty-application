@@ -1,1 +1,1 @@
-web: gunicorn --worker-class eventlet -w 3 --log-level debug --do-handshake-on-connect True --bind 0.0.0.0 backend:backend.wsgi
+web: sh -c 'cd ./backend && daphne -p $PORT backend.asgi:application'
