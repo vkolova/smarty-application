@@ -8,6 +8,7 @@ import {
 import { SecureStore } from 'expo';
 
 import Navigation from './Navigation';
+import Loading from './Loading';
 
 import { u } from '../utils';
 import request from '../request';
@@ -37,7 +38,7 @@ class Profile extends React.Component {
             .then(user => {
                 if (user) {
                     user = JSON.parse(user)
-                    if (user.id != this.props.match.params.id) {
+                    if (user.user.id != this.props.match.params.id) {
                         this.setState({ showPlayBtn: true })
                     } 
                 }
@@ -47,13 +48,13 @@ class Profile extends React.Component {
 
     invite = () => {
         request
-        .post('/api/games/', {
-            opponent: this.props.match.params.id
-        })
-        .then(result => {
-            this.props.history.push(`/game/${result.data.channel}/`)
-        })
-        .catch(error => console.log(error))
+            .post('/api/games/', {
+                opponent: this.props.match.params.id
+            })
+            .then(result => {
+                this.props.history.push(`/game/${result.data.channel}/`)
+            })
+            .catch(error => console.log(error))
     }
 
     render () {
@@ -61,13 +62,16 @@ class Profile extends React.Component {
 
         if (loading || !data) {
             return <React.Fragment>
-                <Text>{'LOADING...'}</Text>
+                <Loading/>
                 <Navigation/>
             </React.Fragment>
         }
 
         const { avatar, level, score, games, streak, wins } = data;
         const { username } = data.user;
+
+        const percentageWins = (wins / games) * 100
+        const percentageLoses = 100 - percentageWins
         
         return <React.Fragment>
             <View style={common.pageNoPadding}>
@@ -92,15 +96,36 @@ class Profile extends React.Component {
                         </View>
                     </View>
 
-                    <View>
+                    <View
+                        style={{
+                            width: '100%',
+                            height: '30%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
                         {
                             showPlayBtn &&
                             <TouchableWithoutFeedback onPress={this.invite}>
-                                <View style={common.btnPrim}>
+                                <View style={{ ...common.btnPrim, backgroundColor: '#00a651', maxWidth: '50%', height: 40, marginBottom: 30 }}>
                                     <Text style={common.btnPrimText}>{ u('играй') }</Text>
                                 </View>
                             </TouchableWithoutFeedback>
                         }
+
+                        <View style={{ width: '100%', height: 30, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignContent: 'center', paddingLeft: 15}}>
+                                <Text>{ 'победи' }</Text>
+                            </View>
+                            <View style={{ width: '96%', height: 10, display: 'flex', flexDirection: 'row', borderRadius: 15, overflow: 'hidden' }}>
+                                <View style={{ height: '100%', width: `${percentageWins}%`,  backgroundColor: '#0aff0a' }}></View>
+                                <View style={{ height: '100%', width: `${percentageLoses}%`, backgroundColor: '#ff000a' }}></View>
+                            </View>
+                            <View style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignContent: 'center', paddingRight: 15}}>
+                                <Text >{ 'загуби' }</Text>
+                            </View>
+                        </View>
                     </View>
                 </View>
             </View>

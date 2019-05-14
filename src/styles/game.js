@@ -13,11 +13,12 @@ export default StyleSheet.create({
         justifyContent: 'space-between'
     },
     avatar: {
-        width: 35,
-        height: 35,
+        width: 40,
+        height: 40,
         marginRight: 10,
         marginLeft: 10,
         borderRadius: 35,
+        borderWidth: 2,
         overflow: 'hidden',
         resizeMode: 'cover'
     },
@@ -89,5 +90,33 @@ export default StyleSheet.create({
     },
     resultsTitle: {
         fontSize: 36,
+    },
+    statsViewWrapper: {
+        width: '100%',
+        height: '15%',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly'
+    },
+    statsWrapper: {
+        width: '30%',
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    statsNumber: {
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    statsText: {
+        width: '100%',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center'
     }
 });

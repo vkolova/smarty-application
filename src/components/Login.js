@@ -2,10 +2,12 @@ import React  from 'react';
 import {
   View,
   Text,
+  Image,
   ImageBackground
 } from 'react-native';
 import { Link } from 'react-router-native';
 import { SecureStore } from 'expo';
+import logo from '../../assets/icon.png';
 
 import Input from './Input';
 import Header from './Header';
@@ -38,7 +40,7 @@ class Login extends React.Component {
       .then(response => {
         const { token } = response.data;
         request.defaults.headers.common.Authorization = `Token ${token}`;
-        console.log(response.data)
+        console.log("!!!!", response.data)
         SecureStore.setItemAsync('user', JSON.stringify(response.data), {
           keychainAccessible: SecureStore.WHEN_UNLOCKED
         })
@@ -50,12 +52,16 @@ class Login extends React.Component {
   render () {
     return (
         <View style={common.pageWrapper}>
-          <Header
-            link='/'
-            title='Вход'
-          />
+          <View style={styles.logoWrapper}>
+            <Image source={logo} style={{ width: 50, height: 50 }}/>
+          </View>
+          
 
           <View style={styles.form}>
+            <Header
+              link='/'
+              title='Вход'
+            />
             <Input
               icon='user'
               label='Потребител'

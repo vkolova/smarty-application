@@ -1,5 +1,5 @@
 import React  from 'react';
-import { View } from 'react-native';
+import { View, TouchableOpacity  } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Link } from 'react-router-native';
 import { SecureStore } from 'expo';
@@ -17,7 +17,7 @@ export default class Navigation extends React.Component {
     .then(user => {
       if (user) {
         user = JSON.parse(user)
-        this.setState({ id: user.id })
+        this.setState({ id: user.user.id })
       }
     })
     .catch(err => console.log(err))
@@ -26,7 +26,7 @@ export default class Navigation extends React.Component {
   render () {
     return (
         <View style={styles.navigation}>
-          <Link to='/home'>
+          <Link component={TouchableOpacity} to='/home'>
             <Icon
               name='home'
               type='feather'
@@ -34,7 +34,7 @@ export default class Navigation extends React.Component {
             />
           </Link>
 
-          <Link to='/ranglist'>
+          <Link component={TouchableOpacity} to='/ranglist'>
             <Icon
               name='award'
               type='feather'
@@ -42,7 +42,7 @@ export default class Navigation extends React.Component {
             />
           </Link>
 
-          <Link to={`/profile/${this.state.id}/`}>
+          <Link component={TouchableOpacity} to={`/profile/${this.state.id}/`}>
             <Icon
               name='user'
               type='feather'
@@ -50,7 +50,7 @@ export default class Navigation extends React.Component {
             />
           </Link>
 
-          <Link to='/settings'>
+          <Link component={TouchableOpacity} to='/settings'>
             <Icon
               name='settings'
               type='feather'

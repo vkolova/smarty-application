@@ -2,10 +2,12 @@ import React  from 'react';
 import {
   View,
   Text,
+  Image,
   ImageBackground
 } from 'react-native';
 import { Link } from 'react-router-native';
 import { SecureStore } from 'expo';
+import logo from '../../assets/icon.png';
 
 import Header from './Header';
 import Input from './Input';
@@ -51,12 +53,15 @@ class Register extends React.Component {
   render () {
     return (
         <View style={common.pageWrapper}>
-          <Header
-            link='/'
-            title='Регистрация'
-          />
+          <View style={styles.logoWrapper}>
+            <Image source={logo} style={{ width: 50, height: 50 }}/>
+          </View>
 
           <View style={styles.form}>
+            <Header
+              link='/'
+              title='Регистрация'
+            />
             <Input
               icon='user'
               label='Потребител'

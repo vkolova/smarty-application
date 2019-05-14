@@ -21,10 +21,59 @@ class Answer extends React.Component {
     }
 
     render () {
-        const { a, i, selected } = this.props; 
+        const { a, i, selected, showAnswers, roundData, player, isCorrect } = this.props; 
         const selectedStyles = selected
-            ? styles.selectedAnswer
+            ? (
+                !isCorrect && showAnswers
+                ? { backgroundColor: '#ffe3e3' }
+                : styles.selectedAnswer)
             : {}
+        const correctAnswerStyles = isCorrect && showAnswers
+            ? styles.correctAnswer
+            : {}
+
+        if (roundData) {
+            opponent = Object.keys(roundData.answers).filter(p => p !== player.username).pop()
+            playerIsCorrect = roundData.answers[player.username].is_correct;
+            opponentIsCorrect = roundData.answers[opponent].is_correct;
+            bothCorrect = roundData.answers[player.username].is_correct && roundData.answers[opponent].is_correct
+            speed = roundData.winner === player.username
+                ? [ player.username, opponent ]
+                : [ opponent, player.username ]
+
+            return <TouchableWithoutFeedback onPress={this.submitAnswer}>
+                <View style={{ ...styles.answer, ...selectedStyles, ...correctAnswerStyles }}>
+                    {
+                        bothCorrect
+                            ? <View style={styles.submittedAnswers}>
+                                {
+                                    roundData.answers[player.username].answered === a.id &&
+                                    <View style={speed[0] == player.username ? styles.answerYou : styles.answerOpponent} />
+                                }
+
+                                {
+                                    roundData.answers[opponent].answered === a.id &&
+                                    <View style={speed[0] == opponent ? styles.answerYou : styles.answerOpponent} />
+                                }
+                            </View>
+                            : <View style={styles.submittedAnswers}>
+                                {
+                                    roundData.answers[player.username].answered === a.id &&
+                                    <View style={styles.answerYou} />
+                                }
+
+                                {
+                                    roundData.answers[opponent].answered === a.id &&
+                                    <View style={styles.answerOpponent} />
+                                }
+                            </View>
+                    }
+
+                    <Text style={styles.letter}>{ `${lettersMap[i]}.` }</Text>
+                    <Text style={styles.answerText}>{ a.content }</Text>
+                </View>
+            </TouchableWithoutFeedback>
+        }
 
         return <TouchableWithoutFeedback onPress={this.submitAnswer}>
             <View style={{ ...styles.answer, ...selectedStyles }}>
@@ -35,9 +84,9 @@ class Answer extends React.Component {
     }
 }
 
-export default class Question extends React.Component {
+class Question extends React.Component {
     state = {
-        remaining: 10,
+        remaining: 1000,
         selected: null
     };
 
@@ -45,12 +94,11 @@ export default class Question extends React.Component {
         this.interval = setInterval(() => {
             const { remaining, selected } = this.state;
             if (remaining === 0) {
-                console.log('submit 0')
                 !selected && this.submitAnswer(0);
             } else {
                 this.setState({ remaining: this.state.remaining - 1 })
             }
-        }, 1000)
+        }, 10)
     }
 
     submitAnswer = id => {
@@ -63,20 +111,23 @@ export default class Question extends React.Component {
 
         const data = JSON.stringify({
             type: 'question_answer',
-            data: id
+            data: {
+                'answer': id,
+                'time': this.state.remaining
+            }
         })    
         ws.send(data)
     }
 
     render () {
-        const { content, answers, ws } = this.props;
+        const { content, answers, player, ws, showAnswers, roundData, correct_answer } = this.props;
         const { selected, remaining } = this.state;
 
         return <View style={styles.questionWrapper}>
             <View
                 style={{
                     ...styles.timer,
-                    width: `${remaining * 10}%`
+                    width: `${remaining ? remaining / 10 : 0}%`
               }}
             />
 
@@ -96,6 +147,10 @@ export default class Question extends React.Component {
                             ws={ws}
                             selected={selected === a.id}
                             parent={this}
+                            player={player}
+                            showAnswers={showAnswers}
+                            roundData={roundData}
+                            isCorrect={a.id==correct_answer}
                         />
                     )
                 }
@@ -103,3 +158,5 @@ export default class Question extends React.Component {
         </View>
     }
 }
+
+export default Question

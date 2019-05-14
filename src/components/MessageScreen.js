@@ -25,7 +25,8 @@ export default class MessageScreen extends React.Component {
                     <Text style={styles.prim}>{ u(this.props.title)}</Text>
                     <Text style={styles.sec}>{ this.props.body }</Text>
                 </View>
-          </View>
+            </View>
+            {this.props.children}
         </View>
     );
   }

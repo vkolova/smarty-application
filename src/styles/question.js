@@ -53,7 +53,10 @@ export default StyleSheet.create({
         borderRadius: 15
     },
     selectedAnswer: {
-        backgroundColor: '#e3e6ed'
+        backgroundColor: '#e3e3e3'
+    },
+    correctAnswer: {
+        backgroundColor: '#e3ffe3'
     },
     answerText: {
         flex: 1
@@ -67,6 +70,32 @@ export default StyleSheet.create({
         left: 0,
         top: 0,
         position: 'absolute',
-        backgroundColor: '#d01c1f'
+        backgroundColor: '#b3b3ff'
+    },
+    submittedAnswers: {
+        height: '100%',
+        width: 15,
+        right: -15,
+        position: 'absolute',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    answerYou: {
+        height: 7,
+        width: 7,
+        marginTop: 3,
+        marginBottom: 3,
+        borderRadius: 7,
+        backgroundColor: '#00ff00'
+    },
+    answerOpponent: {
+        height: 7,
+        width: 7,
+        marginTop: 3,
+        marginBottom: 3,
+        borderRadius: 7,
+        backgroundColor: '#ff0000'
     }
 });

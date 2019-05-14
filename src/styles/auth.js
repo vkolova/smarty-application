@@ -43,5 +43,14 @@ export default StyleSheet.create({
     bottomLink: {
         // position: 'absolute',
         // bottom: 15
-    }
+    },
+    logoWrapper: {
+        width: '100%',
+        paddingTop: '15%',
+        paddingBottom: '15%',
+        display: 'flex',
+        flexDirection: 'column', 
+        justifyContent: 'center',
+        alignItems: 'center'
+      }
 });

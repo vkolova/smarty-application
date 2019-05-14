@@ -1,5 +1,5 @@
 import { NativeRouter, Route } from 'react-router-native';
-import { Notifications } from 'expo';
+import { Notifications, SecureStore } from 'expo';
 import { StyleSheet, View, AppRegistry, NetInfo  } from 'react-native';
 import React from 'react';
 import Sentry from 'sentry-expo';
@@ -40,8 +40,8 @@ export default class App extends React.Component {
     }
 
     componentDidCatch(error, info) {
-        Sentry.captureException(error, info)
-        this.setState({ hasError: true})
+        Sentry.captureException(error, info);
+        this.setState({ hasError: true});
     }
 
     handleNotification = (notification) => {

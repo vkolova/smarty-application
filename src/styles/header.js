@@ -3,10 +3,10 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
     header: {
         width: '100%',
-        // paddingTop: '3%',
+        paddingBottom: '5%',
         display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'flex-start',
+        alignItems: 'center',
+        justifyContent: 'center',
         flexDirection: 'column'
     },
     title: {
