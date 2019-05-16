@@ -134,11 +134,11 @@ export default class Home extends React.Component {
 									/>
 									<Icon
 										onPress={this.chosenPlayer}
-										name={'x'}
+										name={'feather'}
 										type='send'
 										style={{
 											top: 0,
-											marginRight: 15,
+											marginRight: 25,
 											color: '#707070',
 											position: 'absolute'
 										}}

@@ -1,9 +1,9 @@
 {
-  "packagerPort": 19001,
-  "packagerPid": 17828,
-  "expoServerNgrokUrl": "https://pz-6pw.vkolova.app.exp.direct",
-  "packagerNgrokUrl": "https://packager.pz-6pw.vkolova.app.exp.direct",
-  "ngrokPid": 4832,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
   "devToolsPort": 19002,
-  "expoServerPort": 19000
+  "expoServerPort": null
 }

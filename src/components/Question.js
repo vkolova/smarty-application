@@ -86,7 +86,7 @@ class Answer extends React.Component {
 
 class Question extends React.Component {
     state = {
-        remaining: 1000,
+        remaining: 2000,
         selected: null
     };
 
@@ -127,7 +127,7 @@ class Question extends React.Component {
             <View
                 style={{
                     ...styles.timer,
-                    width: `${remaining ? remaining / 10 : 0}%`
+                    width: `${remaining ? remaining / 20 : 0}%`
               }}
             />
 
